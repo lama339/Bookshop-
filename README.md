@@ -1,4 +1,3 @@
-# Bookshop-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,10 +11,10 @@
             margin: 0;
             padding: 0;
             background-color: pink; /* Pink background */
-            color: #000; /* Black text */
+            color: black; /* Black text */
         }
         header {
-            background-color: #333; /* Dark pink */
+            background-color: #FF6F61; /* Dark pink */
             color: white;
             padding: 20px;
             text-align: center;
@@ -74,7 +73,7 @@
         button:hover {
             opacity: 0.9;
         }
-        input {
+        input, textarea {
             margin: 5px 0;
             padding: 10px;
             width: 100%;
@@ -100,7 +99,7 @@
                 <li><a onclick="navigateTo('home')">Home</a></li>
                 <li><a onclick="navigateTo('books')">Books</a></li>
                 <li><a onclick="navigateTo('contact')">Contact</a></li>
-                <li><a onclick="navigateTo('admin')">Admin</a></li>
+                <li><a onclick="navigateTo('admin-login')">Admin</a></li>
             </ul>
         </nav>
     </header>
@@ -108,7 +107,7 @@
     <!-- Home Section -->
     <section id="home">
         <h2>Welcome to Our Bookshop</h2>
-        <p>Explore a wide range of books and discover your next favorite read!</p>
+        <div id="home-content"></div>
     </section>
 
     <!-- Books Section -->
@@ -120,7 +119,7 @@
     <!-- Contact Section -->
     <section id="contact" class="hidden">
         <h2>Contact Us</h2>
-        <p>If you have any questions, email us at <a href="mailto:support@bookshop.com">support@bookshop.com</a>.</p>
+        <p id="contact-content">If you have any questions, email us at <a href="mailto:support@bookshop.com">support@bookshop.com</a>.</p>
     </section>
 
     <!-- Admin Login Section -->
@@ -137,18 +136,35 @@
     <!-- Admin Panel Section -->
     <section id="admin-panel" class="hidden">
         <h2>Admin Panel</h2>
+
+        <!-- Manage Home Content -->
+        <form id="add-home-content-form">
+            <h3>Manage Home Content</h3>
+            <textarea id="home-text" placeholder="Add text to Home section"></textarea>
+            <input type="file" id="home-image" accept="image/*">
+            <button type="submit">Add Content</button>
+        </form>
+        <div id="home-preview"></div>
+
+        <!-- Manage Books -->
         <form id="add-book-form">
             <h3>Add a New Book</h3>
             <input type="text" id="book-title" placeholder="Book Title" required>
             <input type="text" id="book-author" placeholder="Author" required>
             <input type="number" id="book-price" placeholder="Price" required>
+            <input type="file" id="book-image" accept="image/*">
             <button type="submit">Add Book</button>
         </form>
 
-        <div>
-            <h3>Manage Books</h3>
-            <ul id="admin-book-list"></ul>
-        </div>
+        <h3>Manage Books</h3>
+        <ul id="admin-book-list"></ul>
+
+        <!-- Manage Contact Content -->
+        <form id="edit-contact-form">
+            <h3>Manage Contact Content</h3>
+            <textarea id="contact-text" required></textarea>
+            <button type="submit">Update Contact</button>
+        </form>
     </section>
 
     <!-- Footer -->
@@ -182,30 +198,53 @@
             }
         });
 
-        // Books Data
+        // Home Section Management
+        const homeContent = document.getElementById("home-content");
+        const homePreview = document.getElementById("home-preview");
+
+        document.getElementById("add-home-content-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const text = document.getElementById("home-text").value;
+            const file = document.getElementById("home-image").files[0];
+
+            const contentDiv = document.createElement("div");
+            if (text) {
+                const textP = document.createElement("p");
+                textP.textContent = text;
+                contentDiv.appendChild(textP);
+            }
+            if (file) {
+                const img = document.createElement("img");
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = "100%";
+                contentDiv.appendChild(img);
+            }
+
+            homeContent.appendChild(contentDiv);
+            homePreview.appendChild(contentDiv.cloneNode(true));
+        });
+
+        // Books Management
         const books = [];
         const bookList = document.getElementById("book-list");
         const adminBookList = document.getElementById("admin-book-list");
 
-        // Add Book
         document.getElementById("add-book-form").addEventListener("submit", function (e) {
             e.preventDefault();
             const title = document.getElementById("book-title").value;
             const author = document.getElementById("book-author").value;
             const price = document.getElementById("book-price").value;
+            const file = document.getElementById("book-image").files[0];
 
-            books.push({ title, author, price });
-            updateBookList();
-            updateAdminBookList();
-
-            // Clear form
-            e.target.reset();
+            const book = { title, author, price, file };
+            books.push(book);
+            updateBooks();
         });
 
-        // Update Book List (Customer View)
-        function updateBookList() {
+        function updateBooks() {
             bookList.innerHTML = "";
-            books.forEach((book) => {
+            adminBookList.innerHTML = "";
+            books.forEach((book, index) => {
                 const bookDiv = document.createElement("div");
                 bookDiv.className = "book";
                 bookDiv.innerHTML = `
@@ -213,140 +252,33 @@
                     <p>Author: ${book.author}</p>
                     <p>Price: $${book.price}</p>
                 `;
+                if (book.file) {
+                    const img = document.createElement("img");
+                    img.src = URL.createObjectURL(book.file);
+                    img.style.maxWidth = "100%";
+                    bookDiv.appendChild(img);
+                }
                 bookList.appendChild(bookDiv);
-            });
-        }
 
-        // Update Admin Book List (Admin View)
-        function updateAdminBookList() {
-            adminBookList.innerHTML = "";
-            books.forEach((book, index) => {
-                const li = document.createElement("li");
-                li.textContent = `${book.title} by ${book.author} - $${book.price}`;
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.onclick = () => {
+                const adminLi = document.createElement("li");
+                adminLi.textContent = `${book.title} by ${book.author} - $${book.price}`;
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Delete";
+                deleteBtn.onclick = () => {
                     books.splice(index, 1);
-                    updateBookList();
-                    updateAdminBookList();
+                    updateBooks();
                 };
-                li.appendChild(deleteButton);
-                adminBookList.appendChild(li);
+                adminLi.appendChild(deleteBtn);
+                adminBookList.appendChild(adminLi);
             });
         }
-    </script>
-</body>
 
-        }
-        
-    </style>
-</head>
-<body>
-    <section id="home">
-        <h2>Home</h2>
-        <p>Welcome to our online bookshop! Explore a wide range of books and find your next favorite read.</p>
-    </section>
-
-    <section id="books" class="hidden">
-        <h2>Books</h2>
-        <div class="book-container"></div>
-    </section>
-
-    
-    
-        // Load Books
-        const books = Array.from({ length: 100 }, (_, i) => ({
-            id: i + 1,
-            title: `Book Title ${i + 1}`,
-            author: `Author ${i + 1}`,
-            price: (Math.random() * 20 + 5).toFixed(2),
-        }));
-
-        const bookContainer = document.querySelector(".book-container");
-        books.forEach((book) => {
-            const bookDiv = document.createElement("div");
-            bookDiv.className = "book";
-            bookDiv.innerHTML = `
-                <h3>${book.title}</h3>
-                <p>Author: ${book.author}</p>
-                <p>Price: $${book.price}</p>
-                <button onclick="addToCart(${book.id}, '${book.title}', ${book.price})">Add to Cart</button>
-            `;
-            bookContainer.appendChild(bookDiv);
-        });
-
-        // Cart Functionality
-        const cart = [];
-        const cartItemsList = document.getElementById("cart-items");
-        const cartTotal = document.getElementById("cart-total");
-
-        function addToCart(id, name, price) {
-            const existing = cart.find((item) => item.id === id);
-            if (existing) {
-                existing.quantity++;
-            } else {
-                cart.push({ id, name, price, quantity: 1 });
-            }
-            updateCart();
-        }
-
-        function updateCart() {
-            cartItemsList.innerHTML = "";
-            let total = 0;
-
-            cart.forEach((item) => {
-                total += item.price * item.quantity;
-                const li = document.createElement("li");
-                li.textContent = `${item.name} - $${item.price} x ${item.quantity}`;
-                cartItemsList.appendChild(li);
-            });
-
-            total += 3; // Delivery Fee
-            cartTotal.textContent = total.toFixed(2);
-        }
-
-        // Handle Checkout Form
-        document.getElementById("checkout-form").addEventListener("submit", (e) => {
+        // Contact Section Management
+        const contactContent = document.getElementById("contact-content");
+        document.getElementById("edit-contact-form").addEventListener("submit", function (e) {
             e.preventDefault();
-
-            const name = document.getElementById("customer-name").value;
-            const address = document.getElementById("address").value;
-            const city = document.getElementById("city").value;
-            const phone = document.getElementById("phone").value;
-
-            if (cart.length === 0) {
-                alert("Your cart is empty. Please add items to the cart before purchasing.");
-                return;
-            }
-
-            const orderDetails = cart.map((item) => `${item.name} x${item.quantity}`).join("\n");
-            const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0) + 3;
-
-            const message = `
-                New Order from ${name}:
-
-                Order Details:
-                ${orderDetails}
-
-                Address: ${address}, ${city}
-                Phone: ${phone}
-
-                Total: $${totalAmount.toFixed(2)}
-            `;
-
-            // Send email via EmailJS
-            emailjs.send("your_service_id", "your_template_id", {
-                to_email: "your_email@example.com", // Replace with your email
-                subject: "New Order",
-                message: message,
-            })
-            .then(() => {
-                alert("Your order has been placed successfully!");
-                cart.length = 0;
-                updateCart();
-                e.target.reset();
-            })
-            .catch(() => alert("Failed to send order. Please try again."));
+            const newContent = document.getElementById("contact-text").value;
+            contactContent.textContent = newContent;
         });
     </script>
 </body>
