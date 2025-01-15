@@ -236,89 +236,12 @@
         }
     </script>
 </body>
-</html>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookshop</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #FFEBEB; /* Light pink background */
-            color: #000; /* Black text */
         }
-        header {
-            background-color: #FF6F61; /* Darker pink for header */
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        nav ul li {
-            display: inline;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        section {
-            padding: 20px;
-        }
-        .hidden {
-            display: none;
-        }
-        h2 {
-            color: #333;
-        }
-        .book-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .book {
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 200px;
-            background-color: white;
-        }
-        footer {
-            background-color: #FF6F61;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
+        
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to Our Bookshop</h1>
-        <nav>
-            <ul>
-                <li><a onclick="navigateTo('home')">Home</a></li>
-                <li><a onclick="navigateTo('books')">Books</a></li>
-                <li><a onclick="navigateTo('cart')">Cart</a></li>
-                <li><a onclick="navigateTo('contact')">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <section id="home">
         <h2>Home</h2>
         <p>Welcome to our online bookshop! Explore a wide range of books and find your next favorite read.</p>
@@ -329,44 +252,8 @@
         <div class="book-container"></div>
     </section>
 
-    <section id="cart" class="hidden">
-        <h2>Cart</h2>
-        <ul id="cart-items"></ul>
-        <p>Delivery Fee: $3.00</p>
-        <p>Total: $<span id="cart-total">0.00</span></p>
-
-        <form id="checkout-form">
-            <label for="customer-name">Name:</label>
-            <input type="text" id="customer-name" placeholder="Enter your name" required>
-            <label for="address">Address:</label>
-            <input type="text" id="address" placeholder="Enter your address" required>
-            <label for="city">City:</label>
-            <input type="text" id="city" placeholder="Enter your city" required>
-            <label for="phone">Phone Number:</label>
-            <input type="text" id="phone" placeholder="Enter your phone number" required>
-            <button type="submit">Submit Purchase</button>
-        </form>
-    </section>
-
-    <section id="contact" class="hidden">
-        <h2>Contact Us</h2>
-        <p>If you have any questions, feel free to contact us at <a href="mailto:support@bookshop.com">support@bookshop.com</a>.</p>
-    </section>
-
-    <footer>
-        <p>© 2025 Bookshop. All Rights Reserved.</p>
-    </footer>
-
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
-        emailjs.init("your_user_id"); // Replace with your EmailJS User ID
-
-        // Navigation
-        function navigateTo(sectionId) {
-            document.querySelectorAll("section").forEach((section) => section.classList.add("hidden"));
-            document.getElementById(sectionId).classList.remove("hidden");
-        }
-
+    
+    
         // Load Books
         const books = Array.from({ length: 100 }, (_, i) => ({
             id: i + 1,
