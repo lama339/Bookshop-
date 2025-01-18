@@ -1,177 +1,287 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookshop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://www.toptal.com/designers/subtlepatterns/patterns/leafy.png');
+            background-size: cover;
+            color: black;
+        }
 
-const app = express();
+        header {
+            background-color: darkgreen;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 24px;
+        }
 
-// Load data from JSON file
-const dataFilePath = path.join(__dirname, 'data.json');
-let data = { books: [], admin: { username: 'admin', password: 'password123' } };
+        nav {
+            background-color: darkgreen;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
 
-// Load or initialize data
-if (fs.existsSync(dataFilePath)) {
-    data = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
-} else {
-    fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
-}
+        nav a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            margin: 0 15px;
+        }
 
-// Middleware
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+        nav a:hover {
+            background-color: #333;
+        }
 
-// Routes
-app.get('/', (req, res) => {
-    res.send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Bookshop</title>
-            <style>
-                body { font-family: Arial; margin: 0; padding: 0; background: #f4f4f4; }
-                header { background: darkgreen; color: white; padding: 10px; text-align: center; }
-                nav a { margin: 0 15px; color: white; text-decoration: none; }
-                footer { background: darkgreen; color: white; text-align: center; padding: 10px; margin-top: 20px; }
-                .content { padding: 20px; text-align: center; }
-            </style>
-        </head>
-        <body>
-            <header>
-                <h1>Bookshop</h1>
-                <nav>
-                    <a href="/">Home</a>
-                    <a href="/books">Books</a>
-                    <a href="/contact">Contact</a>
-                    <a href="/admin">Admin</a>
-                </nav>
-            </header>
-            <div class="content">
-                <h2>Welcome to Our Bookshop</h2>
-                <p>Your one-stop destination for amazing books!</p>
-            </div>
-            <footer>© 2025 Bookshop. All Rights Reserved.</footer>
-        </body>
-        </html>
-    `);
-});
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
 
-app.get('/books', (req, res) => {
-    const bookHtml = data.books
-        .map(
-            (book) => `
-        <div style="border: 1px solid darkgreen; margin: 20px; padding: 10px; max-width: 300px;">
-            <img src="${book.image}" alt="${book.title}" style="max-width: 100%; height: auto;" />
-            <h3>${book.title}</h3>
-            <p>Price: ${book.price}</p>
-        </div>`
-        )
-        .join('');
-    res.send(`
-        <html>
-        <head><title>Books</title></head>
-        <body>
-            <h1>Books</h1>
-            ${bookHtml}
-            <footer>© 2025 Bookshop. All Rights Reserved.</footer>
-        </body>
-        </html>
-    `);
-});
+        .section {
+            padding: 20px;
+            margin: 20px 0;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
 
-app.get('/contact', (req, res) => {
-    res.send(`
-        <html>
-        <head><title>Contact Us</title></head>
-        <body>
-            <h1>Contact Us</h1>
-            <p>Email: info@bookshop.com</p>
-            <p>Phone: +123 456 7890</p>
-            <footer>© 2025 Bookshop. All Rights Reserved.</footer>
-        </body>
-        </html>
-    `);
-});
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-app.get('/admin', (req, res) => {
-    res.send(`
-        <html>
-        <head>
-            <title>Admin Panel</title>
-            <script>
-                async function submitForm(event, endpoint) {
-                    event.preventDefault();
-                    const formData = new FormData(event.target);
-                    const data = Object.fromEntries(formData.entries());
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    const result = await response.json();
-                    alert(result.message);
-                    if (result.success) window.location.reload();
-                }
-                async function saveChanges() {
-                    const response = await fetch('/admin/save', { method: 'POST' });
-                    const result = await response.json();
-                    alert(result.message);
-                }
-            </script>
-        </head>
-        <body>
-            <h1>Admin Panel</h1>
-            <form onsubmit="submitForm(event, '/admin/login')">
-                <input type="text" name="username" placeholder="Username" required />
-                <input type="password" name="password" placeholder="Password" required />
-                <button type="submit">Login</button>
-            </form>
-            <form onsubmit="submitForm(event, '/admin/add-book')">
-                <input type="text" name="title" placeholder="Book Title" required />
-                <input type="text" name="image" placeholder="Image URL" required />
-                <input type="text" name="price" placeholder="Price" required />
-                <button type="submit">Add Book</button>
-            </form>
-            <form onsubmit="submitForm(event, '/admin/delete-book')">
-                <input type="text" name="title" placeholder="Book Title" required />
-                <button type="submit">Delete Book</button>
-            </form>
+        .book-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+            background-color: white;
+        }
+
+        .book-item img {
+            width: 100%;
+            height: auto;
+        }
+
+        .admin-panel {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .admin-panel input, .admin-panel textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+
+        .admin-panel button {
+            background-color: darkgreen;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .admin-panel button:hover {
+            background-color: green;
+        }
+
+        .login-form {
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+
+        .login-form button {
+            background-color: darkgreen;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    Bookshop
+</header>
+
+<nav>
+    <a href="#" onclick="showSection('home')">Home</a>
+    <a href="#" onclick="showSection('books')">Books</a>
+    <a href="#" onclick="showSection('contact')">Contact</a>
+    <a href="#" onclick="showSection('admin')">Admin</a>
+</nav>
+
+<div class="container">
+    <div id="home" class="section">
+        <h2>Welcome to Our Bookshop!</h2>
+        <p id="home-text">Explore our collection of books available for you!</p>
+        <img id="home-image" src="https://via.placeholder.com/400" alt="Bookshop Image">
+    </div>
+
+    <div id="books" class="section">
+        <h2>Our Books</h2>
+        <div id="book-list" class="book-list">
+            <!-- Dynamic Book List -->
+        </div>
+    </div>
+
+    <div id="contact" class="section">
+        <h2>Contact Us</h2>
+        <p>Email: contact@bookshop.com</p>
+        <p>Phone: +123 456 7890</p>
+    </div>
+
+    <div id="admin" class="section">
+        <h2>Admin Login</h2>
+        <div id="login-form" class="login-form">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+        </div>
+        <div id="admin-panel" class="admin-panel">
+            <h3>Edit Home Page</h3>
+            <textarea id="home-text-edit" rows="4" placeholder="Edit home page text"></textarea>
+            <input type="file" id="home-image-edit" accept="image/*">
+            <br><br>
+            <h3>Manage Books</h3>
+            <input type="text" id="book-title" placeholder="Book Title">
+            <input type="file" id="book-image" accept="image/*">
+            <input type="number" id="book-price" placeholder="Book Price">
+            <button onclick="addBook()">Add Book</button>
+            <br><br>
             <button onclick="saveChanges()">Save Changes</button>
-        </body>
-        </html>
-    `);
-});
+        </div>
+    </div>
+</div>
 
-// API Endpoints
-app.post('/admin/login', (req, res) => {
-    const { username, password } = req.body;
-    if (username === data.admin.username && password === data.admin.password) {
-        res.json({ success: true, message: 'Login successful' });
-    } else {
-        res.json({ success: false, message: 'Invalid credentials' });
+<script>
+    const adminUsername = 'admin';
+    const adminPassword = 'password';
+
+    const books = [
+        { title: 'Book 1', image: 'https://via.placeholder.com/150', price: 15 },
+        { title: 'Book 2', image: 'https://via.placeholder.com/150', price: 20 },
+        { title: 'Book 3', image: 'https://via.placeholder.com/150', price: 25 }
+    ];
+
+    const savedHomeText = localStorage.getItem('homeText') || "Explore our collection of books available for you!";
+    const savedHomeImage = localStorage.getItem('homeImage') || "https://via.placeholder.com/400";
+
+    // Render books and home page content
+    function renderBooks() {
+        const bookListElement = document.getElementById('book-list');
+        bookListElement.innerHTML = '';
+        books.forEach(book => {
+            const bookItem = document.createElement('div');
+            bookItem.classList.add('book-item');
+            bookItem.innerHTML = `
+                <img src="${book.image}" alt="${book.title}">
+                <h3>${book.title}</h3>
+                <p>$${book.price}</p>
+            `;
+            bookListElement.appendChild(bookItem);
+        });
     }
-});
 
-app.post('/admin/add-book', (req, res) => {
-    const { title, image, price } = req.body;
-    data.books.push({ title, image, price });
-    res.json({ success: true, message: 'Book added successfully' });
-});
+    function showSection(section) {
+        const sections = ['home', 'books', 'contact', 'admin'];
+        sections.forEach(s => {
+            document.getElementById(s).style.display = (s === section) ? 'block' : 'none';
+        });
 
-app.post('/admin/delete-book', (req, res) => {
-    const { title } = req.body;
-    data.books = data.books.filter((book) => book.title !== title);
-    res.json({ success: true, message: 'Book deleted successfully' });
-});
+        if (section === 'home') {
+            document.getElementById('home-text').innerText = savedHomeText;
+            document.getElementById('home-image').src = savedHomeImage;
+        }
 
-app.post('/admin/save', (req, res) => {
-    fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
-    res.json({ success: true, message: 'Changes saved successfully' });
-});
+        if (section === 'admin') {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+    }
 
-// Start the server
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
-});
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (username === adminUsername && password === adminPassword) {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+        } else {
+            alert('Invalid credentials');
+        }
+    }
+
+    function saveChanges() {
+        const newHomeText = document.getElementById('home-text-edit').value;
+        const homeImageFile = document.getElementById('home-image-edit').files[0];
+
+        if (newHomeText) {
+            localStorage.setItem('homeText', newHomeText);
+        }
+
+        if (homeImageFile) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                localStorage.setItem('homeImage', e.target.result);
+            };
+            reader.readAsDataURL(homeImageFile);
+        }
+
+        alert('Changes saved!');
+        showSection('home');
+    }
+
+    function addBook() {
+        const title = document.getElementById('book-title').value;
+        const price = document.getElementById('book-price').value;
+        const imageFile = document.getElementById('book-image').files[0];
+
+        if (title && price && imageFile) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                books.push({
+                    title: title,
+                    image: e.target.result,
+                    price: parseFloat(price)
+                });
+                renderBooks();
+                alert('Book added!');
+            };
+            reader.readAsDataURL(imageFile);
+        } else {
+            alert('Please fill in all fields');
+        }
+    }
+
+    // Initial render
+    renderBooks();
+    showSection('home');
+</script>
+
+</body>
+</html>
