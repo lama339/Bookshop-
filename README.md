@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,12 +10,15 @@
             font-family: 'Georgia', serif;
             margin: 0;
             padding: 0;
-            background-color: white; /* White background */
+            background-image: url('leaves-background-with-metallic-foil_79603-956.jpg'); /* Set the uploaded image as background */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: #2C5F2D; /* Dark green for text */
         }
         header {
-            background-color: #97BC62FF; /* Green shade */
-            color: white;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            color: #2C5F2D;
             padding: 20px;
             text-align: center;
         }
@@ -28,24 +31,29 @@
             gap: 20px;
         }
         nav ul li a {
-            color: white;
+            color: #2C5F2D;
             text-decoration: none;
             font-size: 18px;
             cursor: pointer;
         }
         section {
             padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1200px;
+            border-radius: 10px;
         }
         .hidden {
             display: none;
         }
         h2 {
-            color: #2C5F2D; /* Dark green for headings */
+            color: #2C5F2D;
             font-family: 'Georgia', serif;
         }
         footer {
-            background-color: #97BC62FF;
-            color: white;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #2C5F2D;
             text-align: center;
             padding: 10px 0;
             position: fixed;
@@ -55,7 +63,7 @@
         .book-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center; /* Center books */
+            justify-content: center;
             gap: 20px;
         }
         .book {
@@ -73,7 +81,7 @@
             margin-bottom: 10px;
         }
         button {
-            background-color: #97BC62FF;
+            background-color: #2C5F2D;
             color: white;
             border: none;
             padding: 10px;
@@ -98,20 +106,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
-        /* Background with leaves */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background-image: url('https://i.ibb.co/3vRtX9z/leaves-background.jpg'); /* Leaves background */
-            background-repeat: no-repeat;
-            background-size: cover;
-            opacity: 0.1;
-        }
     </style>
 </head>
 <body>
@@ -130,7 +124,7 @@
 
     <!-- Home Section -->
     <section id="home">
-        <h2>Welcome to Our Bookshop</h2>
+        <h2>Home</h2>
         <div id="home-content"></div>
     </section>
 
@@ -160,16 +154,23 @@
     <!-- Admin Panel Section -->
     <section id="admin-panel" class="hidden">
         <h2>Admin Panel</h2>
-        <form id="add-book-form">
-            <h3>Add a New Book</h3>
-            <input type="text" id="book-title" placeholder="Book Title" required>
-            <input type="text" id="book-author" placeholder="Author" required>
-            <input type="number" id="book-price" placeholder="Price" required>
-            <input type="file" id="book-image" accept="image/*">
-            <button type="submit">Add Book</button>
+        <form id="edit-home-form">
+            <h3>Edit Home Content</h3>
+            <textarea id="home-edit" rows="5"></textarea>
+            <button type="button" onclick="saveContent('home')">Save Changes</button>
         </form>
-        <h3>Manage Books</h3>
-        <ul id="admin-book-list"></ul>
+
+        <form id="edit-books-form">
+            <h3>Manage Books</h3>
+            <textarea id="books-edit" rows="5"></textarea>
+            <button type="button" onclick="saveContent('books')">Save Changes</button>
+        </form>
+
+        <form id="edit-contact-form">
+            <h3>Edit Contact Content</h3>
+            <textarea id="contact-edit" rows="5"></textarea>
+            <button type="button" onclick="saveContent('contact')">Save Changes</button>
+        </form>
     </section>
 
     <!-- Footer -->
@@ -189,57 +190,41 @@
         const adminUsername = "admin";
         const adminPassword = "password123";
 
-        // Handle Admin Login
+        // Admin Login
         document.getElementById("login-form").addEventListener("submit", function (e) {
             e.preventDefault();
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
             if (username === adminUsername && password === adminPassword) {
-                alert("Login successful!");
                 navigateTo("admin-panel");
-                loadChanges();
+                loadContent();
             } else {
                 document.getElementById("login-error").style.display = "block";
             }
         });
 
-        // Books Management
-        const books = [];
-        const bookList = document.getElementById("book-list");
+        // Save Content
+        function saveContent(section) {
+            const content = document.getElementById(`${section}-edit`).value;
+            localStorage.setItem(`${section}-content`, content);
+            alert(`${section} content saved!`);
+            loadContent();
+        }
 
-        document.getElementById("add-book-form").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const title = document.getElementById("book-title").value;
-            const author = document.getElementById("book-author").value;
-            const price = document.getElementById("book-price").value;
-
-            books.push({ title, author, price });
-            updateBooks();
-        });
-
-        function updateBooks() {
-            bookList.innerHTML = "";
-            books.forEach((book) => {
-                const bookDiv = document.createElement("div");
-                bookDiv.className = "book";
-                bookDiv.innerHTML = `<img src="https://via.placeholder.com/100x150" alt="${book.title}">
-                                     <h3>${book.title}</h3>
-                                     <p>Author: ${book.author}</p>
-                                     <p>Price: $${book.price}</p>`;
-                bookList.appendChild(bookDiv);
+        // Load Content
+        function loadContent() {
+            ['home', 'books', 'contact'].forEach((section) => {
+                const content = localStorage.getItem(`${section}-content`);
+                if (content) {
+                    document.getElementById(`${section}-content`).innerHTML = content;
+                    document.getElementById(`${section}-edit`).value = content;
+                }
             });
         }
 
-        // Load Changes
-        function loadChanges() {
-            // Load any saved books
-            const savedBooks = localStorage.getItem("books");
-            if (savedBooks) {
-                books.push(...JSON.parse(savedBooks));
-                updateBooks();
-            }
-        }
+        // Initial Load
+        loadContent();
     </script>
 </body>
 </html>
