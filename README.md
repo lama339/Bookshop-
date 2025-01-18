@@ -4,270 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookshop</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #f8f8f8;
-            padding: 20px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 36px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        a {
-            text-decoration: none;
-            color: black;
-            margin: 0 10px;
-        }
-
-        #home-content, #contact-content {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        #book-list {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .book-item {
-            margin: 10px;
-            text-align: center;
-        }
-
-        #admin-panel {
-            width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        #admin-panel input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-
-        #admin-panel button {
-            padding: 10px 20px;
-            margin-top: 10px;
-            background-color: darkgreen;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        #admin-panel button:hover {
-            background-color: green;
-        }
-
-        #book-list-admin {
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<!-- Home Page -->
-<div id="home-page">
     <header>
-        <h1 style="color: darkgreen;">Welcome to Our Bookshop</h1>
+        <h1 id="site-title">Bookshop</h1>
     </header>
-
-    <div id="home-content">
-        <p id="home-text">Find your favorite books here!</p>
-        <img id="home-image" src="default-home.jpg" alt="Bookshop Image">
-    </div>
-
+    <section id="home-content">
+        <h2 id="home-title">Welcome to Our Bookshop</h2>
+        <p id="home-description">Discover a wide range of books that cater to every interest. Whether you're into fiction, non-fiction, or special genres, we have something for everyone!</p>
+        <img id="home-image" src="images/default.jpg" alt="Bookshop Image">
+    </section>
     <footer>
-        <a href="#books-page">Books</a> |
-        <a href="#contact-page">Contact</a> |
-        <a href="#admin-page">Admin</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="books.html">Books</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.php">Admin</a>
+        </nav>
     </footer>
-</div>
-
-<!-- Books Page -->
-<div id="books-page" style="display: none;">
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books - Bookshop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <header>
-        <h1 style="color: darkgreen;">Our Books</h1>
+        <h1>Bookshop</h1>
     </header>
-
-    <div id="book-list">
-        <!-- Dynamically generated book content will go here -->
-    </div>
-
+    <section id="books-list">
+        <!-- Dynamically loaded books will appear here -->
+    </section>
     <footer>
-        <a href="#home-page">Home</a> |
-        <a href="#contact-page">Contact</a> |
-        <a href="#admin-page">Admin</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="books.html">Books</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.php">Admin</a>
+        </nav>
     </footer>
-</div>
-
-<!-- Contact Page -->
-<div id="contact-page" style="display: none;">
+    <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Bookshop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <header>
-        <h1 style="color: darkgreen;">Contact Us</h1>
+        <h1>Bookshop</h1>
     </header>
-
-    <div id="contact-content">
-        <p id="contact-text">Feel free to reach out to us!</p>
-        <img id="contact-image" src="default-contact.jpg" alt="Contact Image">
-    </div>
-
+    <section id="contact-info">
+        <h2>Contact Us</h2>
+        <p id="contact-description">Feel free to reach out to us for any inquiries, feedback, or book requests!</p>
+        <img id="contact-image" src="images/default_contact.jpg" alt="Contact Image">
+    </section>
     <footer>
-        <a href="#home-page">Home</a> |
-        <a href="#books-page">Books</a> |
-        <a href="#admin-page">Admin</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="books.html">Books</a>
+            <a href="contact.html">Contact</a>
+            <a href="admin.php">Admin</a>
+        </nav>
     </footer>
-</div>
+</body>
+</html>
+<?php
+// Admin login verification
+session_start();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_POST['username'] == 'admin' && $_POST['password'] == 'adminpassword') {
+        $_SESSION['logged_in'] = true;
+    }
+}
 
-<!-- Admin Panel -->
-<div id="admin-page" style="display: none;">
+if (!isset($_SESSION['logged_in'])) {
+    header('Location: login.php');
+    exit;
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <header>
-        <h1 style="color: darkgreen;">Admin Panel</h1>
+        <h1>Admin Panel</h1>
     </header>
-
-    <div id="admin-panel">
-        <h2>Edit Home Page</h2>
-        <label for="home-text">Text:</label>
-        <input type="text" id="home-text">
-        <br>
-        <label for="home-image">Home Image URL:</label>
-        <input type="text" id="home-image">
+    <section id="admin-section">
+        <h2>Home Page Content</h2>
+        <label for="home-title">Title:</label>
+        <input type="text" id="home-title" value="Welcome to Our Bookshop">
+        <label for="home-description">Description:</label>
+        <textarea id="home-description">Discover a wide range of books that cater to every interest...</textarea>
+        <label for="home-image">Select Image:</label>
+        <input type="file" id="home-image" accept="image/*">
         
-        <h2>Edit Contact Page</h2>
-        <label for="contact-text">Text:</label>
-        <input type="text" id="contact-text">
-        <br>
-        <label for="contact-image">Contact Image URL:</label>
-        <input type="text" id="contact-image">
+        <h2>Contact Page Content</h2>
+        <label for="contact-description">Description:</label>
+        <textarea id="contact-description">Feel free to reach out to us for any inquiries...</textarea>
+        <label for="contact-image">Select Image:</label>
+        <input type="file" id="contact-image" accept="image/*">
 
-        <h2>Edit Books</h2>
-        <input type="text" id="book-title" placeholder="Book Title">
-        <input type="text" id="book-price" placeholder="Book Price">
-        <input type="text" id="book-image" placeholder="Book Image URL">
-        <button id="add-book">Add Book</button>
-
-        <div id="book-list-admin">
-            <!-- Book list will be dynamically displayed here -->
+        <h2>Books</h2>
+        <div id="books-list-admin">
+            <!-- Dynamically load book data here -->
         </div>
 
         <button id="save-changes">Save Changes</button>
-    </div>
+    </section>
 
     <footer>
-        <a href="#home-page">Home</a> |
-        <a href="#books-page">Books</a> |
-        <a href="#contact-page">Contact</a>
+        <a href="index.html">Home</a>
+        <a href="books.html">Books</a>
+        <a href="contact.html">Contact</a>
     </footer>
-</div>
+    <script src="script.js"></script>
+</body>
+</html>
+<?php
+// Assuming a simple file-based approach for simplicity
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $data = $_POST['data'];
+    file_put_contents('data.json', json_encode($data));
+}
+?>
+body {
+    font-family: Arial, sans-serif;
+}
 
-<script>
-// Handle navigation between pages
-const pages = ['home-page', 'books-page', 'contact-page', 'admin-page'];
-const links = document.querySelectorAll('footer a');
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
 
-links.forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetPage = link.getAttribute('href').substring(1);
-        showPage(targetPage);
-    });
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+nav a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+}
+
+section {
+    padding: 20px;
+}
+
+#site-title {
+    color: darkgreen;
+}
+
+#home-image, #contact-image {
+    width: 100%;
+    height: auto;
+}
+
+#books-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.book-item {
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.book-item img {
+    width: 100px;
+    height: 150px;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    loadHomeContent();
+    loadBooks();
 });
 
-function showPage(pageId) {
-    pages.forEach(page => {
-        document.getElementById(page).style.display = (page === pageId) ? 'block' : 'none';
+function loadHomeContent() {
+    const homeTitle = localStorage.getItem('homeTitle') || 'Welcome to Our Bookshop';
+    const homeDescription = localStorage.getItem('homeDescription') || 'Discover a wide range of books that cater to every interest...';
+    const homeImage = localStorage.getItem('homeImage') || 'images/default.jpg';
+
+    document.getElementById('home-title').innerText = homeTitle;
+    document.getElementById('home-description').innerText = homeDescription;
+    document.getElementById('home-image').src = homeImage;
+}
+
+function loadBooks() {
+    const books = JSON.parse(localStorage.getItem('books')) || [];
+    const booksList = document.getElementById('books-list');
+    booksList.innerHTML = '';
+
+    books.forEach(book => {
+        const bookElement = document.createElement('div');
+        bookElement.classList.add('book-item');
+        bookElement.innerHTML = `
+            <img src="${book.image}" alt="${book.title}">
+            <h3>${book.title}</h3>
+            <p>$${book.price}</p>
+        `;
+        booksList.appendChild(bookElement);
     });
 }
 
-// JavaScript for Admin Panel functionality
-document.addEventListener("DOMContentLoaded", function () {
-    const homeTextInput = document.getElementById('home-text');
-    const homeImageInput = document.getElementById('home-image');
-    const contactTextInput = document.getElementById('contact-text');
-    const contactImageInput = document.getElementById('contact-image');
-    const bookTitleInput = document.getElementById('book-title');
-    const bookPriceInput = document.getElementById('book-price');
-    const bookImageInput = document.getElementById('book-image');
-    const addBookButton = document.getElementById('add-book');
-    const saveChangesButton = document.getElementById('save-changes');
+document.getElementById('save-changes').addEventListener('click', function() {
+    const homeTitle = document.getElementById('home-title').value;
+    const homeDescription = document.getElementById('home-description').value;
+    const homeImage = document.getElementById('home-image').files[0]?.name || 'images/default.jpg';
     
-    let books = JSON.parse(localStorage.getItem('books')) || [];
-
-    function updateBookList() {
-        const bookListContainer = document.getElementById('book-list-admin');
-        bookListContainer.innerHTML = '';
-        books.forEach((book, index) => {
-            const bookItem = document.createElement('div');
-            bookItem.classList.add('book-item');
-            bookItem.innerHTML = `
-                <h3>${book.title}</h3>
-                <img src="${book.image}" alt="${book.title}" width="100">
-                <p>$${book.price}</p>
-                <button onclick="deleteBook(${index})">Delete</button>
-            `;
-            bookListContainer.appendChild(bookItem);
-        });
-    }
-
-    addBookButton.addEventListener('click', function () {
-        const book = {
-            title: bookTitleInput.value,
-            price: bookPriceInput.value,
-            image: bookImageInput.value
-        };
-        books.push(book);
-        localStorage.setItem('books', JSON.stringify(books));
-        updateBookList();
-    });
-
-    function deleteBook(index) {
-        books.splice(index, 1);
-        localStorage.setItem('books', JSON.stringify(books));
-        updateBookList();
-    }
-
-    saveChangesButton.addEventListener('click', function () {
-        const homeText = homeTextInput.value;
-        const homeImage = homeImageInput.value;
-        const contactText = contactTextInput.value;
-        const contactImage = contactImageInput.value;
-
-        localStorage.setItem('homeText', homeText);
-        localStorage.setItem('homeImage', homeImage);
-        localStorage.setItem('contactText', contactText);
-        localStorage.setItem('contactImage', contactImage);
-    });
-
-    function loadSavedContent() {
-        const homeText = localStorage.getItem('homeText');
-        const homeImage = localStorage.getItem('homeImage');
-        const contactText = localStorage.getItem('contactText');
-        const contactImage = localStorage.getItem('contactImage');
-
-        if (homeText) homeTextInput.value = homeText;
-        if (homeImage) homeImageInput.value = homeImage;
-        if (contactText) contactTextInput.value = contactText;
-        if (contactImage) contactImageInput.value = contactImage;
-    }
-
-    loadSavedContent();
-    updateBookList();
+    localStorage.setItem('homeTitle', homeTitle);
+    localStorage.setItem('homeDescription', homeDescription);
+    localStorage.setItem('homeImage', homeImage);
+    
+    alert('Changes Saved!');
 });
-</script>
-
-</body>
-</html>
