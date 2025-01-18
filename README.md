@@ -9,278 +9,264 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: url('https://www.toptal.com/designers/subtlepatterns/patterns/leafy.png');
-            background-size: cover;
-            color: black;
         }
 
         header {
-            background-color: darkgreen;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-            font-size: 24px;
-        }
-
-        nav {
-            background-color: darkgreen;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav a {
-            color: white;
-            padding: 10px;
-            text-decoration: none;
-            margin: 0 15px;
-        }
-
-        nav a:hover {
-            background-color: #333;
-        }
-
-        .container {
-            width: 80%;
-            margin: 20px auto;
-        }
-
-        .section {
+            background-color: #f8f8f8;
             padding: 20px;
-            margin: 20px 0;
-            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
         }
 
-        .book-list {
+        h1 {
+            font-size: 36px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+            margin: 0 10px;
+        }
+
+        #home-content, #contact-content {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #book-list {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .book-item {
-            border: 1px solid #ddd;
-            padding: 10px;
             margin: 10px;
-            width: 200px;
             text-align: center;
-            background-color: white;
         }
 
-        .book-item img {
-            width: 100%;
-            height: auto;
-        }
-
-        .admin-panel {
-            display: none;
-            background-color: white;
+        #admin-panel {
+            width: 80%;
+            margin: 0 auto;
             padding: 20px;
-            border: 1px solid #ddd;
         }
 
-        .admin-panel input, .admin-panel textarea {
+        #admin-panel input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin: 10px 0;
-            border: 1px solid #ddd;
         }
 
-        .admin-panel button {
+        #admin-panel button {
+            padding: 10px 20px;
+            margin-top: 10px;
             background-color: darkgreen;
             color: white;
             border: none;
-            padding: 10px;
             cursor: pointer;
         }
 
-        .admin-panel button:hover {
+        #admin-panel button:hover {
             background-color: green;
         }
 
-        .login-form {
-            width: 300px;
-            margin: 100px auto;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
+        #book-list-admin {
+            margin-top: 20px;
         }
-
-        .login-form input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-        }
-
-        .login-form button {
-            background-color: darkgreen;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-        }
-
     </style>
 </head>
 <body>
 
-<header>
-    Bookshop
-</header>
+<!-- Home Page -->
+<div id="home-page">
+    <header>
+        <h1 style="color: darkgreen;">Welcome to Our Bookshop</h1>
+    </header>
 
-<nav>
-    <a href="#" onclick="showSection('home')">Home</a>
-    <a href="#" onclick="showSection('books')">Books</a>
-    <a href="#" onclick="showSection('contact')">Contact</a>
-    <a href="#" onclick="showSection('admin')">Admin</a>
-</nav>
-
-<div class="container">
-    <div id="home" class="section">
-        <h2>Welcome to Our Bookshop!</h2>
-        <p id="home-text">Explore our collection of books available for you!</p>
-        <img id="home-image" src="https://via.placeholder.com/400" alt="Bookshop Image">
+    <div id="home-content">
+        <p id="home-text">Find your favorite books here!</p>
+        <img id="home-image" src="default-home.jpg" alt="Bookshop Image">
     </div>
 
-    <div id="books" class="section">
-        <h2>Our Books</h2>
-        <div id="book-list" class="book-list">
-            <!-- Dynamic Book List -->
+    <footer>
+        <a href="#books-page">Books</a> |
+        <a href="#contact-page">Contact</a> |
+        <a href="#admin-page">Admin</a>
+    </footer>
+</div>
+
+<!-- Books Page -->
+<div id="books-page" style="display: none;">
+    <header>
+        <h1 style="color: darkgreen;">Our Books</h1>
+    </header>
+
+    <div id="book-list">
+        <!-- Dynamically generated book content will go here -->
+    </div>
+
+    <footer>
+        <a href="#home-page">Home</a> |
+        <a href="#contact-page">Contact</a> |
+        <a href="#admin-page">Admin</a>
+    </footer>
+</div>
+
+<!-- Contact Page -->
+<div id="contact-page" style="display: none;">
+    <header>
+        <h1 style="color: darkgreen;">Contact Us</h1>
+    </header>
+
+    <div id="contact-content">
+        <p id="contact-text">Feel free to reach out to us!</p>
+        <img id="contact-image" src="default-contact.jpg" alt="Contact Image">
+    </div>
+
+    <footer>
+        <a href="#home-page">Home</a> |
+        <a href="#books-page">Books</a> |
+        <a href="#admin-page">Admin</a>
+    </footer>
+</div>
+
+<!-- Admin Panel -->
+<div id="admin-page" style="display: none;">
+    <header>
+        <h1 style="color: darkgreen;">Admin Panel</h1>
+    </header>
+
+    <div id="admin-panel">
+        <h2>Edit Home Page</h2>
+        <label for="home-text">Text:</label>
+        <input type="text" id="home-text">
+        <br>
+        <label for="home-image">Home Image URL:</label>
+        <input type="text" id="home-image">
+        
+        <h2>Edit Contact Page</h2>
+        <label for="contact-text">Text:</label>
+        <input type="text" id="contact-text">
+        <br>
+        <label for="contact-image">Contact Image URL:</label>
+        <input type="text" id="contact-image">
+
+        <h2>Edit Books</h2>
+        <input type="text" id="book-title" placeholder="Book Title">
+        <input type="text" id="book-price" placeholder="Book Price">
+        <input type="text" id="book-image" placeholder="Book Image URL">
+        <button id="add-book">Add Book</button>
+
+        <div id="book-list-admin">
+            <!-- Book list will be dynamically displayed here -->
         </div>
+
+        <button id="save-changes">Save Changes</button>
     </div>
 
-    <div id="contact" class="section">
-        <h2>Contact Us</h2>
-        <p>Email: contact@bookshop.com</p>
-        <p>Phone: +123 456 7890</p>
-    </div>
-
-    <div id="admin" class="section">
-        <h2>Admin Login</h2>
-        <div id="login-form" class="login-form">
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button onclick="login()">Login</button>
-        </div>
-        <div id="admin-panel" class="admin-panel">
-            <h3>Edit Home Page</h3>
-            <textarea id="home-text-edit" rows="4" placeholder="Edit home page text"></textarea>
-            <input type="file" id="home-image-edit" accept="image/*">
-            <br><br>
-            <h3>Manage Books</h3>
-            <input type="text" id="book-title" placeholder="Book Title">
-            <input type="file" id="book-image" accept="image/*">
-            <input type="number" id="book-price" placeholder="Book Price">
-            <button onclick="addBook()">Add Book</button>
-            <br><br>
-            <button onclick="saveChanges()">Save Changes</button>
-        </div>
-    </div>
+    <footer>
+        <a href="#home-page">Home</a> |
+        <a href="#books-page">Books</a> |
+        <a href="#contact-page">Contact</a>
+    </footer>
 </div>
 
 <script>
-    const adminUsername = 'admin';
-    const adminPassword = 'password';
+// Handle navigation between pages
+const pages = ['home-page', 'books-page', 'contact-page', 'admin-page'];
+const links = document.querySelectorAll('footer a');
 
-    const books = [
-        { title: 'Book 1', image: 'https://via.placeholder.com/150', price: 15 },
-        { title: 'Book 2', image: 'https://via.placeholder.com/150', price: 20 },
-        { title: 'Book 3', image: 'https://via.placeholder.com/150', price: 25 }
-    ];
+links.forEach(link => {
+    link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetPage = link.getAttribute('href').substring(1);
+        showPage(targetPage);
+    });
+});
 
-    const savedHomeText = localStorage.getItem('homeText') || "Explore our collection of books available for you!";
-    const savedHomeImage = localStorage.getItem('homeImage') || "https://via.placeholder.com/400";
+function showPage(pageId) {
+    pages.forEach(page => {
+        document.getElementById(page).style.display = (page === pageId) ? 'block' : 'none';
+    });
+}
 
-    // Render books and home page content
-    function renderBooks() {
-        const bookListElement = document.getElementById('book-list');
-        bookListElement.innerHTML = '';
-        books.forEach(book => {
+// JavaScript for Admin Panel functionality
+document.addEventListener("DOMContentLoaded", function () {
+    const homeTextInput = document.getElementById('home-text');
+    const homeImageInput = document.getElementById('home-image');
+    const contactTextInput = document.getElementById('contact-text');
+    const contactImageInput = document.getElementById('contact-image');
+    const bookTitleInput = document.getElementById('book-title');
+    const bookPriceInput = document.getElementById('book-price');
+    const bookImageInput = document.getElementById('book-image');
+    const addBookButton = document.getElementById('add-book');
+    const saveChangesButton = document.getElementById('save-changes');
+    
+    let books = JSON.parse(localStorage.getItem('books')) || [];
+
+    function updateBookList() {
+        const bookListContainer = document.getElementById('book-list-admin');
+        bookListContainer.innerHTML = '';
+        books.forEach((book, index) => {
             const bookItem = document.createElement('div');
             bookItem.classList.add('book-item');
             bookItem.innerHTML = `
-                <img src="${book.image}" alt="${book.title}">
                 <h3>${book.title}</h3>
+                <img src="${book.image}" alt="${book.title}" width="100">
                 <p>$${book.price}</p>
+                <button onclick="deleteBook(${index})">Delete</button>
             `;
-            bookListElement.appendChild(bookItem);
+            bookListContainer.appendChild(bookItem);
         });
     }
 
-    function showSection(section) {
-        const sections = ['home', 'books', 'contact', 'admin'];
-        sections.forEach(s => {
-            document.getElementById(s).style.display = (s === section) ? 'block' : 'none';
-        });
+    addBookButton.addEventListener('click', function () {
+        const book = {
+            title: bookTitleInput.value,
+            price: bookPriceInput.value,
+            image: bookImageInput.value
+        };
+        books.push(book);
+        localStorage.setItem('books', JSON.stringify(books));
+        updateBookList();
+    });
 
-        if (section === 'home') {
-            document.getElementById('home-text').innerText = savedHomeText;
-            document.getElementById('home-image').src = savedHomeImage;
-        }
-
-        if (section === 'admin') {
-            document.getElementById('login-form').style.display = 'block';
-            document.getElementById('admin-panel').style.display = 'none';
-        }
+    function deleteBook(index) {
+        books.splice(index, 1);
+        localStorage.setItem('books', JSON.stringify(books));
+        updateBookList();
     }
 
-    function login() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+    saveChangesButton.addEventListener('click', function () {
+        const homeText = homeTextInput.value;
+        const homeImage = homeImageInput.value;
+        const contactText = contactTextInput.value;
+        const contactImage = contactImageInput.value;
 
-        if (username === adminUsername && password === adminPassword) {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'block';
-        } else {
-            alert('Invalid credentials');
-        }
+        localStorage.setItem('homeText', homeText);
+        localStorage.setItem('homeImage', homeImage);
+        localStorage.setItem('contactText', contactText);
+        localStorage.setItem('contactImage', contactImage);
+    });
+
+    function loadSavedContent() {
+        const homeText = localStorage.getItem('homeText');
+        const homeImage = localStorage.getItem('homeImage');
+        const contactText = localStorage.getItem('contactText');
+        const contactImage = localStorage.getItem('contactImage');
+
+        if (homeText) homeTextInput.value = homeText;
+        if (homeImage) homeImageInput.value = homeImage;
+        if (contactText) contactTextInput.value = contactText;
+        if (contactImage) contactImageInput.value = contactImage;
     }
 
-    function saveChanges() {
-        const newHomeText = document.getElementById('home-text-edit').value;
-        const homeImageFile = document.getElementById('home-image-edit').files[0];
-
-        if (newHomeText) {
-            localStorage.setItem('homeText', newHomeText);
-        }
-
-        if (homeImageFile) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                localStorage.setItem('homeImage', e.target.result);
-            };
-            reader.readAsDataURL(homeImageFile);
-        }
-
-        alert('Changes saved!');
-        showSection('home');
-    }
-
-    function addBook() {
-        const title = document.getElementById('book-title').value;
-        const price = document.getElementById('book-price').value;
-        const imageFile = document.getElementById('book-image').files[0];
-
-        if (title && price && imageFile) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                books.push({
-                    title: title,
-                    image: e.target.result,
-                    price: parseFloat(price)
-                });
-                renderBooks();
-                alert('Book added!');
-            };
-            reader.readAsDataURL(imageFile);
-        } else {
-            alert('Please fill in all fields');
-        }
-    }
-
-    // Initial render
-    renderBooks();
-    showSection('home');
+    loadSavedContent();
+    updateBookList();
+});
 </script>
 
 </body>
