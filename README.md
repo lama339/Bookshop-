@@ -7,14 +7,14 @@
     <style>
         /* General Styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Georgia', serif;
             margin: 0;
             padding: 0;
-            background-color: pink; /* Pink background */
-            color: black; /* Black text */
+            background-color: white; /* White background */
+            color: #2C5F2D; /* Dark green for text */
         }
         header {
-            background-color: #FF6F61; /* Dark pink */
+            background-color: #97BC62FF; /* Green shade */
             color: white;
             padding: 20px;
             text-align: center;
@@ -40,10 +40,11 @@
             display: none;
         }
         h2 {
-            color: #333;
+            color: #2C5F2D; /* Dark green for headings */
+            font-family: 'Georgia', serif;
         }
         footer {
-            background-color: #FF6F61;
+            background-color: #97BC62FF;
             color: white;
             text-align: center;
             padding: 10px 0;
@@ -54,16 +55,25 @@
         .book-container {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center; /* Center books */
             gap: 20px;
         }
         .book {
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 200px;
+            border: 1px solid #EAEAEA;
+            padding: 20px;
+            width: 250px;
             background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-radius: 10px;
+        }
+        .book img {
+            width: 100px;
+            height: 150px;
+            margin-bottom: 10px;
         }
         button {
-            background-color: #FF6F61;
+            background-color: #97BC62FF;
             color: white;
             border: none;
             padding: 10px;
@@ -88,12 +98,26 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
+        /* Background with leaves */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('https://i.ibb.co/3vRtX9z/leaves-background.jpg'); /* Leaves background */
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.1;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <h1>Bookshop</h1>
+        <h1>Welcome to Our Bookshop</h1>
         <nav>
             <ul>
                 <li><a onclick="navigateTo('home')">Home</a></li>
@@ -119,7 +143,7 @@
     <!-- Contact Section -->
     <section id="contact" class="hidden">
         <h2>Contact Us</h2>
-        <p id="contact-content">If you have any questions, email us at <a href="mailto:support@bookshop.com">support@bookshop.com</a>.</p>
+        <p id="contact-content">For inquiries, email us at <a href="mailto:support@bookshop.com">support@bookshop.com</a>.</p>
     </section>
 
     <!-- Admin Login Section -->
@@ -136,17 +160,6 @@
     <!-- Admin Panel Section -->
     <section id="admin-panel" class="hidden">
         <h2>Admin Panel</h2>
-
-        <!-- Manage Home Content -->
-        <form id="add-home-content-form">
-            <h3>Manage Home Content</h3>
-            <textarea id="home-text" placeholder="Add text to Home section"></textarea>
-            <input type="file" id="home-image" accept="image/*">
-            <button type="submit">Add Content</button>
-        </form>
-        <div id="home-preview"></div>
-
-        <!-- Manage Books -->
         <form id="add-book-form">
             <h3>Add a New Book</h3>
             <input type="text" id="book-title" placeholder="Book Title" required>
@@ -155,16 +168,8 @@
             <input type="file" id="book-image" accept="image/*">
             <button type="submit">Add Book</button>
         </form>
-
         <h3>Manage Books</h3>
         <ul id="admin-book-list"></ul>
-
-        <!-- Manage Contact Content -->
-        <form id="edit-contact-form">
-            <h3>Manage Contact Content</h3>
-            <textarea id="contact-text" required></textarea>
-            <button type="submit">Update Contact</button>
-        </form>
     </section>
 
     <!-- Footer -->
@@ -193,93 +198,48 @@
             if (username === adminUsername && password === adminPassword) {
                 alert("Login successful!");
                 navigateTo("admin-panel");
+                loadChanges();
             } else {
                 document.getElementById("login-error").style.display = "block";
             }
         });
 
-        // Home Section Management
-        const homeContent = document.getElementById("home-content");
-        const homePreview = document.getElementById("home-preview");
-
-        document.getElementById("add-home-content-form").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const text = document.getElementById("home-text").value;
-            const file = document.getElementById("home-image").files[0];
-
-            const contentDiv = document.createElement("div");
-            if (text) {
-                const textP = document.createElement("p");
-                textP.textContent = text;
-                contentDiv.appendChild(textP);
-            }
-            if (file) {
-                const img = document.createElement("img");
-                img.src = URL.createObjectURL(file);
-                img.style.maxWidth = "100%";
-                contentDiv.appendChild(img);
-            }
-
-            homeContent.appendChild(contentDiv);
-            homePreview.appendChild(contentDiv.cloneNode(true));
-        });
-
         // Books Management
         const books = [];
         const bookList = document.getElementById("book-list");
-        const adminBookList = document.getElementById("admin-book-list");
 
         document.getElementById("add-book-form").addEventListener("submit", function (e) {
             e.preventDefault();
             const title = document.getElementById("book-title").value;
             const author = document.getElementById("book-author").value;
             const price = document.getElementById("book-price").value;
-            const file = document.getElementById("book-image").files[0];
 
-            const book = { title, author, price, file };
-            books.push(book);
+            books.push({ title, author, price });
             updateBooks();
         });
 
         function updateBooks() {
             bookList.innerHTML = "";
-            adminBookList.innerHTML = "";
-            books.forEach((book, index) => {
+            books.forEach((book) => {
                 const bookDiv = document.createElement("div");
                 bookDiv.className = "book";
-                bookDiv.innerHTML = `
-                    <h3>${book.title}</h3>
-                    <p>Author: ${book.author}</p>
-                    <p>Price: $${book.price}</p>
-                `;
-                if (book.file) {
-                    const img = document.createElement("img");
-                    img.src = URL.createObjectURL(book.file);
-                    img.style.maxWidth = "100%";
-                    bookDiv.appendChild(img);
-                }
+                bookDiv.innerHTML = `<img src="https://via.placeholder.com/100x150" alt="${book.title}">
+                                     <h3>${book.title}</h3>
+                                     <p>Author: ${book.author}</p>
+                                     <p>Price: $${book.price}</p>`;
                 bookList.appendChild(bookDiv);
-
-                const adminLi = document.createElement("li");
-                adminLi.textContent = `${book.title} by ${book.author} - $${book.price}`;
-                const deleteBtn = document.createElement("button");
-                deleteBtn.textContent = "Delete";
-                deleteBtn.onclick = () => {
-                    books.splice(index, 1);
-                    updateBooks();
-                };
-                adminLi.appendChild(deleteBtn);
-                adminBookList.appendChild(adminLi);
             });
         }
 
-        // Contact Section Management
-        const contactContent = document.getElementById("contact-content");
-        document.getElementById("edit-contact-form").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const newContent = document.getElementById("contact-text").value;
-            contactContent.textContent = newContent;
-        });
+        // Load Changes
+        function loadChanges() {
+            // Load any saved books
+            const savedBooks = localStorage.getItem("books");
+            if (savedBooks) {
+                books.push(...JSON.parse(savedBooks));
+                updateBooks();
+            }
+        }
     </script>
 </body>
 </html>
