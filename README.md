@@ -1,3 +1,42 @@
+<?php
+session_start();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+        if ($_POST['username'] == 'admin' && $_POST['password'] == 'admin123') {
+            $_SESSION['loggedin'] = true;
+            header("Location: #admin");
+        } else {
+            $error = "Invalid username or password.";
+        }
+    }
+}
+
+// Save Changes functionality
+if (isset($_POST['save_changes'])) {
+    $data = json_decode(file_get_contents('config.json'), true);
+
+    if (isset($_POST['home_text'])) {
+        $data['home_text'] = $_POST['home_text'];
+    }
+    if (isset($_POST['contact_info'])) {
+        $data['contact_info'] = $_POST['contact_info'];
+    }
+    if (isset($_POST['book_title']) && isset($_POST['book_image']) && isset($_POST['book_price'])) {
+        $new_book = [
+            'title' => $_POST['book_title'],
+            'image' => $_POST['book_image'],
+            'price' => $_POST['book_price']
+        ];
+        $data['books'][] = $new_book;
+    }
+
+    file_put_contents('config.json', json_encode($data, JSON_PRETTY_PRINT));
+    header("Location: #admin");
+}
+
+$config = json_decode(file_get_contents('config.json'), true);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,281 +46,166 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: url('https://www.toptal.com/designers/subtlepatterns/patterns/leafy.png');
-            background-size: cover;
-            color: black;
+            background-color: #f4f4f4;
         }
-
         header {
-            background-color: darkgreen;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-            font-size: 24px;
-        }
-
-        nav {
-            background-color: darkgreen;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav a {
-            color: white;
-            padding: 10px;
-            text-decoration: none;
-            margin: 0 15px;
-        }
-
-        nav a:hover {
-            background-color: #333;
-        }
-
-        .container {
-            width: 80%;
-            margin: 20px auto;
-        }
-
-        .section {
+            background-color: #004d00;
             padding: 20px;
-            margin: 20px 0;
-            background-color: rgba(255, 255, 255, 0.8);
+            color: white;
+            text-align: center;
         }
-
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        h1, h2 {
+            color: darkgreen;
+        }
+        section {
+            padding: 20px;
+            margin: 10px;
+        }
         .book-list {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
+            flex-wrap: wrap;
         }
-
         .book-item {
-            border: 1px solid #ddd;
-            padding: 10px;
             margin: 10px;
-            width: 200px;
-            text-align: center;
-            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
         }
-
-        .book-item img {
+        form input, form textarea {
             width: 100%;
-            height: auto;
+            margin-bottom: 10px;
+            padding: 10px;
         }
-
-        .admin-panel {
-            display: none;
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #ddd;
-        }
-
-        .admin-panel input, .admin-panel textarea {
-            width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-        }
-
-        .admin-panel button {
+        button {
             background-color: darkgreen;
             color: white;
             border: none;
             padding: 10px;
             cursor: pointer;
         }
-
-        .admin-panel button:hover {
-            background-color: green;
+        .error {
+            color: red;
         }
-
-        .login-form {
-            width: 300px;
-            margin: 100px auto;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
-        }
-
-        .login-form input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-        }
-
-        .login-form button {
-            background-color: darkgreen;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-        }
-
     </style>
 </head>
 <body>
 
 <header>
-    Bookshop
+    <h1>Bookshop</h1>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#books">Books</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#admin">Admin</a></li>
+        </ul>
+    </nav>
 </header>
 
-<nav>
-    <a href="#" onclick="showSection('home')">Home</a>
-    <a href="#" onclick="showSection('books')">Books</a>
-    <a href="#" onclick="showSection('contact')">Contact</a>
-    <a href="#" onclick="showSection('admin')">Admin</a>
-</nav>
-
-<div class="container">
-    <div id="home" class="section">
-        <h2>Welcome to Our Bookshop!</h2>
-        <p id="home-text">Explore our collection of books available for you!</p>
-        <img id="home-image" src="https://via.placeholder.com/400" alt="Bookshop Image">
+<!-- Home Page -->
+<section id="home">
+    <div class="content">
+        <h2>Welcome to our Bookshop</h2>
+        <p><?php echo $config['home_text']; ?></p>
     </div>
+</section>
 
-    <div id="books" class="section">
-        <h2>Our Books</h2>
-        <div id="book-list" class="book-list">
-            <!-- Dynamic Book List -->
-        </div>
+<!-- Books Page -->
+<section id="books">
+    <h2>Our Books</h2>
+    <div class="book-list">
+        <?php
+        foreach ($config['books'] as $book) {
+            echo "<div class='book-item'>";
+            echo "<img src='{$book['image']}' alt='{$book['title']}'>";
+            echo "<h3>{$book['title']}</h3>";
+            echo "<p>Price: {$book['price']}</p>";
+            echo "</div>";
+        }
+        ?>
     </div>
+</section>
 
-    <div id="contact" class="section">
-        <h2>Contact Us</h2>
-        <p>Email: contact@bookshop.com</p>
-        <p>Phone: +123 456 7890</p>
-    </div>
+<!-- Contact Page -->
+<section id="contact">
+    <h2>Contact Us</h2>
+    <form method="post">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name">
+        <label for="message">Message</label>
+        <textarea id="message" name="message"></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+</section>
 
-    <div id="admin" class="section">
-        <h2>Admin Login</h2>
-        <div id="login-form" class="login-form">
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button onclick="login()">Login</button>
-        </div>
-        <div id="admin-panel" class="admin-panel">
-            <h3>Edit Home Page</h3>
-            <textarea id="home-text-edit" rows="4" placeholder="Edit home page text"></textarea>
-            <input type="file" id="home-image-edit" accept="image/*">
-            <br><br>
-            <h3>Manage Books</h3>
-            <input type="text" id="book-title" placeholder="Book Title">
-            <input type="file" id="book-image" accept="image/*">
-            <input type="number" id="book-price" placeholder="Book Price">
-            <button onclick="addBook()">Add Book</button>
-            <br><br>
-            <button onclick="saveChanges()">Save Changes</button>
-        </div>
-    </div>
-</div>
+<!-- Admin Panel -->
+<section id="admin">
+    <h2>Admin Panel</h2>
 
-<script>
-    const adminUsername = 'admin';
-    const adminPassword = 'password';
+    <?php if (!isset($_SESSION['loggedin'])): ?>
+        <h3>Login</h3>
+        <form method="post">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
+            <button type="submit">Login</button>
+        </form>
+        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+    <?php else: ?>
+        <h3>Update Home Text</h3>
+        <form method="post">
+            <textarea name="home_text"><?php echo $config['home_text']; ?></textarea>
+            <button type="submit" name="save_changes">Save Changes</button>
+        </form>
 
-    const books = [
-        { title: 'Book 1', image: 'https://via.placeholder.com/150', price: 15 },
-        { title: 'Book 2', image: 'https://via.placeholder.com/150', price: 20 },
-        { title: 'Book 3', image: 'https://via.placeholder.com/150', price: 25 }
-    ];
+        <h3>Update Contact Info</h3>
+        <form method="post">
+            <textarea name="contact_info"><?php echo $config['contact_info']; ?></textarea>
+            <button type="submit" name="save_changes">Save Changes</button>
+        </form>
 
-    const savedHomeText = localStorage.getItem('homeText') || "Explore our collection of books available for you!";
-    const savedHomeImage = localStorage.getItem('homeImage') || "https://via.placeholder.com/400";
-
-    // Render books and home page content
-    function renderBooks() {
-        const bookListElement = document.getElementById('book-list');
-        bookListElement.innerHTML = '';
-        books.forEach(book => {
-            const bookItem = document.createElement('div');
-            bookItem.classList.add('book-item');
-            bookItem.innerHTML = `
-                <img src="${book.image}" alt="${book.title}">
-                <h3>${book.title}</h3>
-                <p>$${book.price}</p>
-            `;
-            bookListElement.appendChild(bookItem);
-        });
-    }
-
-    function showSection(section) {
-        const sections = ['home', 'books', 'contact', 'admin'];
-        sections.forEach(s => {
-            document.getElementById(s).style.display = (s === section) ? 'block' : 'none';
-        });
-
-        if (section === 'home') {
-            document.getElementById('home-text').innerText = savedHomeText;
-            document.getElementById('home-image').src = savedHomeImage;
-        }
-
-        if (section === 'admin') {
-            document.getElementById('login-form').style.display = 'block';
-            document.getElementById('admin-panel').style.display = 'none';
-        }
-    }
-
-    function login() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        if (username === adminUsername && password === adminPassword) {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'block';
-        } else {
-            alert('Invalid credentials');
-        }
-    }
-
-    function saveChanges() {
-        const newHomeText = document.getElementById('home-text-edit').value;
-        const homeImageFile = document.getElementById('home-image-edit').files[0];
-
-        if (newHomeText) {
-            localStorage.setItem('homeText', newHomeText);
-        }
-
-        if (homeImageFile) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                localStorage.setItem('homeImage', e.target.result);
-            };
-            reader.readAsDataURL(homeImageFile);
-        }
-
-        alert('Changes saved!');
-        showSection('home');
-    }
-
-    function addBook() {
-        const title = document.getElementById('book-title').value;
-        const price = document.getElementById('book-price').value;
-        const imageFile = document.getElementById('book-image').files[0];
-
-        if (title && price && imageFile) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                books.push({
-                    title: title,
-                    image: e.target.result,
-                    price: parseFloat(price)
-                });
-                renderBooks();
-                alert('Book added!');
-            };
-            reader.readAsDataURL(imageFile);
-        } else {
-            alert('Please fill in all fields');
-        }
-    }
-
-    // Initial render
-    renderBooks();
-    showSection('home');
-</script>
+        <h3>Add New Book</h3>
+        <form method="post">
+            <input type="text" name="book_title" placeholder="Book Title">
+            <input type="text" name="book_image" placeholder="Image URL">
+            <input type="number" name="book_price" placeholder="Price">
+            <button type="submit" name="save_changes">Add Book</button>
+        </form>
+    <?php endif; ?>
+</section>
 
 </body>
 </html>
+
+<?php
+// Data in config.json (initial structure)
+file_put_contents('config.json', json_encode([
+    "home_text" => "Welcome to our Bookshop. Browse and discover new books!",
+    "contact_info" => "You can reach us via email at info@bookshop.com.",
+    "books" => [
+        [
+            "title" => "Book 1",
+            "image" => "https://example.com/book1.jpg",
+            "price" => "$10.99"
+        ],
+        [
+            "title" => "Book 2",
+            "image" => "https://example.com/book2.jpg",
+            "price" => "$12.99"
+        ]
+    ]
+], JSON_PRETTY_PRINT));
+?>
