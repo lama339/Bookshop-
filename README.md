@@ -1,211 +1,218 @@
 <?php
 session_start();
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['username']) && isset($_POST['password'])) {
-        if ($_POST['username'] == 'admin' && $_POST['password'] == 'admin123') {
-            $_SESSION['loggedin'] = true;
-            header("Location: #admin");
-        } else {
-            $error = "Invalid username or password.";
-        }
-    }
-}
 
-// Save Changes functionality
-if (isset($_POST['save_changes'])) {
-    $data = json_decode(file_get_contents('config.json'), true);
+// Predefined username and password
+$valid_username = "almanhal";
+$valid_password = "almanhal123";
 
-    if (isset($_POST['home_text'])) {
-        $data['home_text'] = $_POST['home_text'];
-    }
-    if (isset($_POST['contact_info'])) {
-        $data['contact_info'] = $_POST['contact_info'];
-    }
-    if (isset($_POST['book_title']) && isset($_POST['book_image']) && isset($_POST['book_price'])) {
-        $new_book = [
-            'title' => $_POST['book_title'],
-            'image' => $_POST['book_image'],
-            'price' => $_POST['book_price']
-        ];
-        $data['books'][] = $new_book;
-    }
-
-    file_put_contents('config.json', json_encode($data, JSON_PRETTY_PRINT));
+// Check login credentials
+if ($_POST['username'] === $valid_username && $_POST['password'] === $valid_password) {
+    $_SESSION['authenticated'] = true;
     header("Location: #admin");
+} else {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        echo "Invalid login.";
+    }
 }
 
-$config = json_decode(file_get_contents('config.json'), true);
+$homeText = "Welcome to Our Bookshop. Browse through a wide collection of books.";
+$contactText = "If you have any questions, feel free to reach out to us.";
+$books = [
+    ["title" => "Book Title 1", "price" => "$15.99", "image" => "images/book1.jpg"],
+    ["title" => "Book Title 2", "price" => "$20.99", "image" => "images/book2.jpg"]
+];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['homeText']) && isset($_POST['contactText'])) {
+    $homeText = $_POST['homeText'];
+    $contactText = $_POST['contactText'];
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookshop</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #004d00;
-            padding: 20px;
-            color: white;
-            text-align: center;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav ul li {
-            display: inline;
-            margin-right: 20px;
-        }
-        a {
-            color: white;
-            text-decoration: none;
-        }
-        h1, h2 {
-            color: darkgreen;
-        }
-        section {
-            padding: 20px;
-            margin: 10px;
-        }
-        .book-list {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .book-item {
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-        form input, form textarea {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-        button {
-            background-color: darkgreen;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
-        .error {
-            color: red;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookshop</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .background-image {
+      background-image: url('https://images.app.goo.gl/X92EKtHc2d7KxrAm6'); /* Replace with your actual image URL */
+      background-size: cover;
+      height: 100vh;
+      padding: 20px;
+      color: black;
+    }
+
+    header h1 {
+      color: darkgreen;
+      text-align: center;
+      font-size: 3em;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+    }
+
+    nav ul li {
+      margin: 0 20px;
+    }
+
+    nav ul li a {
+      color: black;
+      text-decoration: none;
+      font-size: 1.2em;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2em;
+    }
+
+    #book-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .book-item {
+      text-align: center;
+      margin: 20px;
+    }
+
+    .book-item img {
+      width: 150px;
+      height: 200px;
+    }
+
+    #admin-content {
+      width: 80%;
+      margin: auto;
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-
-<header>
-    <h1>Bookshop</h1>
-    <nav>
+  <div class="background-image">
+    <header>
+      <h1>Bookshop</h1>
+      <nav>
         <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#books">Books</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="#admin">Admin</a></li>
+          <li><a href="#">Home</a></li>
+          <li><a href="#books">Books</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#admin">Admin</a></li>
         </ul>
-    </nav>
-</header>
+      </nav>
+    </header>
 
-<!-- Home Page -->
-<section id="home">
-    <div class="content">
-        <h2>Welcome to our Bookshop</h2>
-        <p><?php echo $config['home_text']; ?></p>
-    </div>
-</section>
+    <!-- Home Section -->
+    <main id="home">
+      <h2>Welcome to Our Bookshop</h2>
+      <p id="home-text"><?= $homeText ?></p>
+    </main>
 
-<!-- Books Page -->
-<section id="books">
-    <h2>Our Books</h2>
-    <div class="book-list">
-        <?php
-        foreach ($config['books'] as $book) {
-            echo "<div class='book-item'>";
-            echo "<img src='{$book['image']}' alt='{$book['title']}'>";
-            echo "<h3>{$book['title']}</h3>";
-            echo "<p>Price: {$book['price']}</p>";
-            echo "</div>";
-        }
-        ?>
-    </div>
-</section>
+    <!-- Books Section -->
+    <section id="books">
+      <h2>Our Books</h2>
+      <div id="book-list">
+        <?php foreach ($books as $book): ?>
+        <div class="book-item">
+          <img src="<?= $book['image'] ?>" alt="Book Image">
+          <h3><?= $book['title'] ?></h3>
+          <p><?= $book['price'] ?></p>
+        </div>
+        <?php endforeach; ?>
+      </div>
+    </section>
 
-<!-- Contact Page -->
-<section id="contact">
-    <h2>Contact Us</h2>
-    <form method="post">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name">
-        <label for="message">Message</label>
-        <textarea id="message" name="message"></textarea>
-        <button type="submit">Send Message</button>
-    </form>
-</section>
+    <!-- Contact Section -->
+    <section id="contact">
+      <h2>Contact Us</h2>
+      <p id="contact-text"><?= $contactText ?></p>
+    </section>
 
-<!-- Admin Panel -->
-<section id="admin">
-    <h2>Admin Panel</h2>
-
-    <?php if (!isset($_SESSION['loggedin'])): ?>
-        <h3>Login</h3>
-        <form method="post">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password">
-            <button type="submit">Login</button>
+    <!-- Admin Panel Section -->
+    <section id="admin">
+      <h2>Admin Panel</h2>
+      <?php if (!isset($_SESSION['authenticated'])): ?>
+        <form method="POST">
+          <label for="username">Username:</label>
+          <input type="text" name="username" id="username" required>
+          
+          <label for="password">Password:</label>
+          <input type="password" name="password" id="password" required>
+          
+          <button type="submit">Login</button>
         </form>
-        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
-    <?php else: ?>
-        <h3>Update Home Text</h3>
-        <form method="post">
-            <textarea name="home_text"><?php echo $config['home_text']; ?></textarea>
-            <button type="submit" name="save_changes">Save Changes</button>
-        </form>
+      <?php else: ?>
+        <form method="POST">
+          <h3>Edit Home Page Text</h3>
+          <textarea name="homeText"><?= $homeText ?></textarea>
+          
+          <h3>Edit Contact Page Text</h3>
+          <textarea name="contactText"><?= $contactText ?></textarea>
+          
+          <h3>Books</h3>
+          <div>
+            <label for="book-title">Book Title:</label>
+            <input type="text" id="book-title">
+            <label for="book-price">Price:</label>
+            <input type="text" id="book-price">
+            <button type="button" onclick="addBook()">Add Book</button>
+          </div>
 
-        <h3>Update Contact Info</h3>
-        <form method="post">
-            <textarea name="contact_info"><?php echo $config['contact_info']; ?></textarea>
-            <button type="submit" name="save_changes">Save Changes</button>
-        </form>
+          <h4>Books List:</h4>
+          <div id="books-list"></div>
 
-        <h3>Add New Book</h3>
-        <form method="post">
-            <input type="text" name="book_title" placeholder="Book Title">
-            <input type="text" name="book_image" placeholder="Image URL">
-            <input type="number" name="book_price" placeholder="Price">
-            <button type="submit" name="save_changes">Add Book</button>
+          <button type="submit">Save Changes</button>
         </form>
-    <?php endif; ?>
-</section>
+      <?php endif; ?>
+    </section>
+  </div>
 
+  <script>
+    const booksListDiv = document.getElementById("books-list");
+
+    let books = <?= json_encode($books); ?>;
+    
+    function addBook() {
+      const title = document.getElementById("book-title").value;
+      const price = document.getElementById("book-price").value;
+
+      if (title && price) {
+        books.push({ title: title, price: price, image: "images/book3.jpg" });
+        displayBooks();
+      }
+    }
+
+    function displayBooks() {
+      booksListDiv.innerHTML = "";
+      books.forEach((book) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<p>${book.title} - ${book.price}</p>`;
+        booksListDiv.appendChild(div);
+      });
+    }
+
+    displayBooks();
+  </script>
 </body>
 </html>
-
-<?php
-// Data in config.json (initial structure)
-file_put_contents('config.json', json_encode([
-    "home_text" => "Welcome to our Bookshop. Browse and discover new books!",
-    "contact_info" => "You can reach us via email at info@bookshop.com.",
-    "books" => [
-        [
-            "title" => "Book 1",
-            "image" => "https://example.com/book1.jpg",
-            "price" => "$10.99"
-        ],
-        [
-            "title" => "Book 2",
-            "image" => "https://example.com/book2.jpg",
-            "price" => "$12.99"
-        ]
-    ]
-], JSON_PRETTY_PRINT));
-?>
