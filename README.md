@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookshop</title>
     <style>
         /* General Styles */
         body {
-            font-family: 'Georgia', serif;
+            font-family: "Georgia", serif;
             margin: 0;
             padding: 0;
-            background-image: url('leaves-background-with-metallic-foil_79603-956.jpg'); /* Set the uploaded image as background */
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: #2C5F2D; /* Dark green for text */
+            background-image: url('https://www.transparenttextures.com/patterns/green-leaves.png'); /* Leaves background */
+            background-color: #fefcf0; /* Light beige */
+            color: #4a4a4a; /* Dark gray text */
         }
         header {
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-            color: #2C5F2D;
+            background-color: #8fbc8f; /* Soft green */
+            color: white;
             padding: 20px;
             text-align: center;
         }
@@ -30,29 +29,21 @@
             gap: 20px;
         }
         nav ul li a {
-            color: #2C5F2D;
+            color: white;
             text-decoration: none;
             font-size: 18px;
             cursor: pointer;
         }
         section {
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-            margin: 20px auto;
-            width: 90%;
-            max-width: 1200px;
-            border-radius: 10px;
-        }
-        .hidden {
-            display: none;
+            text-align: center;
         }
         h2 {
-            color: #2C5F2D;
-            font-family: 'Georgia', serif;
+            color: #4a4a4a;
         }
         footer {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #2C5F2D;
+            background-color: #8fbc8f;
+            color: white;
             text-align: center;
             padding: 10px 0;
             position: fixed;
@@ -62,33 +53,30 @@
         .book-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: center; /* Center books */
             gap: 20px;
+            margin-top: 20px;
         }
         .book {
-            border: 1px solid #EAEAEA;
-            padding: 20px;
-            width: 250px;
+            border: 2px solid #8fbc8f;
+            border-radius: 10px;
+            padding: 10px;
+            width: 200px;
             background-color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
-            border-radius: 10px;
-        }
-        .book img {
-            width: 100px;
-            height: 150px;
-            margin-bottom: 10px;
         }
         button {
-            background-color: #2C5F2D;
+            background-color: #4caf50;
             color: white;
             border: none;
             padding: 10px;
             cursor: pointer;
             border-radius: 5px;
+            font-size: 14px;
         }
         button:hover {
-            opacity: 0.9;
+            background-color: #45a049;
         }
         input, textarea {
             margin: 5px 0;
@@ -110,7 +98,7 @@
 <body>
     <!-- Header -->
     <header>
-        <h1>Welcome to Our Bookshop</h1>
+        <h1>Bookshop</h1>
         <nav>
             <ul>
                 <li><a onclick="navigateTo('home')">Home</a></li>
@@ -123,20 +111,32 @@
 
     <!-- Home Section -->
     <section id="home">
-        <h2>Home</h2>
-        <div id="home-content"></div>
+        <h2>Welcome to Our Bookshop</h2>
+        <p>Discover the best books at the most affordable prices!</p>
     </section>
 
     <!-- Books Section -->
     <section id="books" class="hidden">
-        <h2>Books</h2>
-        <div class="book-container" id="book-list"></div>
+        <h2>Our Books</h2>
+        <div class="book-container" id="book-list">
+            <!-- Example books -->
+            <div class="book">
+                <h3>The Great Gatsby</h3>
+                <p>Author: F. Scott Fitzgerald</p>
+                <p>Price: $10.99</p>
+            </div>
+            <div class="book">
+                <h3>1984</h3>
+                <p>Author: George Orwell</p>
+                <p>Price: $9.99</p>
+            </div>
+        </div>
     </section>
 
     <!-- Contact Section -->
     <section id="contact" class="hidden">
         <h2>Contact Us</h2>
-        <p id="contact-content">For inquiries, email us at <a href="mailto:support@bookshop.com">support@bookshop.com</a>.</p>
+        <p>If you have any questions, feel free to email us at <a href="mailto:support@bookshop.com">support@bookshop.com</a>.</p>
     </section>
 
     <!-- Admin Login Section -->
@@ -153,22 +153,12 @@
     <!-- Admin Panel Section -->
     <section id="admin-panel" class="hidden">
         <h2>Admin Panel</h2>
-        <form id="edit-home-form">
-            <h3>Edit Home Content</h3>
-            <textarea id="home-edit" rows="5"></textarea>
-            <button type="button" onclick="saveContent('home')">Save Changes</button>
-        </form>
-
-        <form id="edit-books-form">
-            <h3>Manage Books</h3>
-            <textarea id="books-edit" rows="5"></textarea>
-            <button type="button" onclick="saveContent('books')">Save Changes</button>
-        </form>
-
-        <form id="edit-contact-form">
-            <h3>Edit Contact Content</h3>
-            <textarea id="contact-edit" rows="5"></textarea>
-            <button type="button" onclick="saveContent('contact')">Save Changes</button>
+        <form id="add-book-form">
+            <h3>Add a New Book</h3>
+            <input type="text" id="book-title" placeholder="Book Title" required>
+            <input type="text" id="book-author" placeholder="Author" required>
+            <input type="number" id="book-price" placeholder="Price" required>
+            <button type="submit">Add Book</button>
         </form>
     </section>
 
@@ -185,45 +175,50 @@
             document.getElementById(sectionId).classList.remove("hidden");
         }
 
-        // Admin Credentials
+        // Admin Login
         const adminUsername = "admin";
         const adminPassword = "password123";
 
-        // Admin Login
         document.getElementById("login-form").addEventListener("submit", function (e) {
             e.preventDefault();
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
             if (username === adminUsername && password === adminPassword) {
+                alert("Login successful!");
                 navigateTo("admin-panel");
-                loadContent();
             } else {
                 document.getElementById("login-error").style.display = "block";
             }
         });
 
-        // Save Content
-        function saveContent(section) {
-            const content = document.getElementById(`${section}-edit`).value;
-            localStorage.setItem(`${section}-content`, content);
-            alert(`${section} content saved!`);
-            loadContent();
-        }
+        // Books Management
+        const books = [];
+        const bookList = document.getElementById("book-list");
 
-        // Load Content
-        function loadContent() {
-            ['home', 'books', 'contact'].forEach((section) => {
-                const content = localStorage.getItem(`${section}-content`);
-                if (content) {
-                    document.getElementById(`${section}-content`).innerHTML = content;
-                    document.getElementById(`${section}-edit`).value = content;
-                }
+        document.getElementById("add-book-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const title = document.getElementById("book-title").value;
+            const author = document.getElementById("book-author").value;
+            const price = document.getElementById("book-price").value;
+
+            books.push({ title, author, price });
+            updateBooks();
+        });
+
+        function updateBooks() {
+            bookList.innerHTML = "";
+            books.forEach((book) => {
+                const bookDiv = document.createElement("div");
+                bookDiv.className = "book";
+                bookDiv.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p>Author: ${book.author}</p>
+                    <p>Price: $${book.price}</p>
+                `;
+                bookList.appendChild(bookDiv);
             });
         }
-
-        // Initial Load
-        loadContent();
     </script>
 </body>
 </html>
