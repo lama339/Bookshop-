@@ -1,185 +1,180 @@
-<?php
-// Admin login verification
-session_start();
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_POST['username'] == 'admin' && $_POST['password'] == 'adminpassword') {
-        $_SESSION['logged_in'] = true;
-    }
-}
-
-if (!isset($_SESSION['logged_in']) && basename($_SERVER['PHP_SELF']) == 'admin.php') {
-    header('Location: admin.php');
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_data'])) {
-    $data = json_encode([
-        'homeTitle' => $_POST['homeTitle'],
-        'homeDescription' => $_POST['homeDescription'],
-        'homeImage' => $_POST['homeImage'],
-        'contactDescription' => $_POST['contactDescription'],
-        'contactImage' => $_POST['contactImage'],
-        'books' => json_decode($_POST['books'])
-    ]);
-    file_put_contents('data.json', $data);
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookshop</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almanhal Bookshop</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
 
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            text-align: center;
-        }
+    body {
+      display: flex;
+      font-size: 16px;
+    }
 
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 10px;
-        }
+    /* Sidebar Styles */
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
 
-        nav a {
-            margin: 0 10px;
-            color: white;
-            text-decoration: none;
-        }
+    .sidebar nav {
+      margin-top: 20px;
+    }
 
-        section {
-            padding: 20px;
-        }
+    .sidebar a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: white;
+      transition: 0.3s;
+    }
 
-        #site-title {
-            color: darkgreen;
-        }
+    .sidebar a:hover {
+      background-color: #34495e;
+    }
 
-        #home-image, #contact-image {
-            width: 100%;
-            height: auto;
-        }
+    button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
 
-        #books-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+    /* Content Section */
+    main {
+      margin-left: 270px;
+      padding: 20px;
+    }
 
-        .book-item {
-            border: 1px solid #ccc;
-            margin: 10px;
-            padding: 10px;
-            text-align: center;
-        }
+    /* Admin Section Styles */
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+    }
 
-        .book-item img {
-            width: 100px;
-            height: 150px;
-        }
-    </style>
+    input[type="text"],
+    input[type="password"] {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button[type="submit"] {
+      padding: 10px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #2ecc71;
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+      .sidebar {
+        width: 100px;
+      }
+
+      .sidebar a {
+        text-align: center;
+        font-size: 12px;
+      }
+
+      main {
+        margin-left: 110px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<?php if (basename($_SERVER['PHP_SELF']) == 'admin.php'): ?>
-    <header>
-        <h1>Admin Panel</h1>
-    </header>
-    <section id="admin-section">
-        <form method="POST" action="admin.php">
-            <h2>Home Page Content</h2>
-            <label for="home-title">Title:</label>
-            <input type="text" id="home-title" name="homeTitle" value="Welcome to Our Bookshop">
-            <label for="home-description">Description:</label>
-            <textarea id="home-description" name="homeDescription">Discover a wide range of books that cater to every interest...</textarea>
-            <label for="home-image">Select Image:</label>
-            <input type="file" id="home-image" name="homeImage" accept="image/*">
+<!-- Sidebar -->
+<div class="sidebar">
+  <button onclick="toggleSidebar()">☰ Menu</button>
+  <nav id="menu">
+    <a href="#home">Home</a>
+    <a href="#books">Books</a>
+    <a href="#contact">Contact</a>
+    <a href="#admin">Admin Panel</a>
+  </nav>
+</div>
 
-            <h2>Contact Page Content</h2>
-            <label for="contact-description">Description:</label>
-            <textarea id="contact-description" name="contactDescription">Feel free to reach out to us for any inquiries...</textarea>
-            <label for="contact-image">Select Image:</label>
-            <input type="file" id="contact-image" name="contactImage" accept="image/*">
+<!-- Main Content -->
+<main>
+  <!-- Home Section -->
+  <section id="home">
+    <h1>Welcome to Almanhal Bookshop</h1>
+    <p>Your one-stop shop for all kinds of books.</p>
+  </section>
 
-            <h2>Books</h2>
-            <div id="books-list-admin">
-                <!-- Dynamically load book data here -->
-            </div>
+  <!-- Books Section -->
+  <section id="books">
+    <h2>Books</h2>
+    <h3>Novels</h3>
+    <p>1. Book Title A - $10.00</p>
+    <p>2. Book Title B - $15.00</p>
 
-            <button type="submit" name="save_data">Save Changes</button>
-        </form>
-    </section>
-    <footer>
-        <a href="index.html">Home</a>
-        <a href="books.html">Books</a>
-        <a href="contact.html">Contact</a>
-    </footer>
-<?php else: ?>
-    <header>
-        <h1>Bookshop</h1>
-    </header>
-    <section id="home-content">
-        <h2 id="home-title">Welcome to Our Bookshop</h2>
-        <p id="home-description">Discover a wide range of books that cater to every interest. Whether you're into fiction, non-fiction, or special genres, we have something for everyone!</p>
-        <img id="home-image" src="images/default.jpg" alt="Bookshop Image">
-    </section>
+    <h3>Other Categories</h3>
+    <p>1. Educational Book A - $12.00</p>
+    <p>2. History Book B - $18.00</p>
+  </section>
 
-    <section id="books-list">
-        <!-- Dynamically loaded books will appear here -->
-    </section>
+  <!-- Contact Section -->
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: contact@almanhalbookshop.com</p>
+    <p>Phone: +123-456-7890</p>
+  </section>
 
-    <footer>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="books.html">Books</a>
-            <a href="contact.html">Contact</a>
-            <a href="admin.php">Admin</a>
-        </nav>
-    </footer>
+  <!-- Admin Section -->
+  <section id="admin">
+    <h2>Admin Panel</h2>
+    <form>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" placeholder="Enter username">
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter password">
+      
+      <button type="submit">Login</button>
+    </form>
+  </section>
+</main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadHomeContent();
-            loadBooks();
-        });
-
-        function loadHomeContent() {
-            const homeTitle = localStorage.getItem('homeTitle') || 'Welcome to Our Bookshop';
-            const homeDescription = localStorage.getItem('homeDescription') || 'Discover a wide range of books that cater to every interest...';
-            const homeImage = localStorage.getItem('homeImage') || 'images/default.jpg';
-
-            document.getElementById('home-title').innerText = homeTitle;
-            document.getElementById('home-description').innerText = homeDescription;
-            document.getElementById('home-image').src = homeImage;
-        }
-
-        function loadBooks() {
-            const books = JSON.parse(localStorage.getItem('books')) || [];
-            const booksList = document.getElementById('books-list');
-            booksList.innerHTML = '';
-
-            books.forEach(book => {
-                const bookElement = document.createElement('div');
-                bookElement.classList.add('book-item');
-                bookElement.innerHTML = `
-                    <img src="${book.image}" alt="${book.title}">
-                    <h3>${book.title}</h3>
-                    <p>$${book.price}</p>
-                `;
-                booksList.appendChild(bookElement);
-            });
-        }
-    </script>
-<?php endif; ?>
+<!-- JavaScript -->
+<script>
+  function toggleSidebar() {
+    const menu = document.getElementById("menu");
+    if (menu.style.display === "block") {
+      menu.style.display = "none";
+    } else {
+      menu.style.display = "block";
+    }
+  }
+</script>
 
 </body>
 </html>
