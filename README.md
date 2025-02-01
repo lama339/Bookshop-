@@ -62,6 +62,15 @@
     main {
       margin-left: 270px;
       padding: 20px;
+      display: none;
+    }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: block;
     }
 
     /* Admin Section Styles */
@@ -79,7 +88,8 @@
       border-radius: 5px;
     }
 
-    button[type="submit"] {
+    button[type="submit"],
+    button.edit {
       padding: 10px;
       background-color: #27ae60;
       color: white;
@@ -113,19 +123,19 @@
 
 <!-- Sidebar -->
 <div class="sidebar">
-  <button onclick="toggleSidebar()">☰ Menu</button>
+  <button onclick="toggleSidebar()">☰</button>
   <nav id="menu">
-    <a href="#home">Home</a>
-    <a href="#books">Books</a>
-    <a href="#contact">Contact</a>
-    <a href="#admin">Admin Panel</a>
+    <a href="#" onclick="showSection('home')">Home</a>
+    <a href="#" onclick="showSection('books')">Books</a>
+    <a href="#" onclick="showSection('contact')">Contact</a>
+    <a href="#" onclick="showSection('admin')">Admin Panel</a>
   </nav>
 </div>
 
 <!-- Main Content -->
 <main>
   <!-- Home Section -->
-  <section id="home">
+  <section id="home" class="active">
     <h1>Welcome to Almanhal Bookshop</h1>
     <p>Your one-stop shop for all kinds of books.</p>
   </section>
@@ -133,13 +143,12 @@
   <!-- Books Section -->
   <section id="books">
     <h2>Books</h2>
-    <h3>Novels</h3>
-    <p>1. Book Title A - $10.00</p>
-    <p>2. Book Title B - $15.00</p>
-
-    <h3>Other Categories</h3>
-    <p>1. Educational Book A - $12.00</p>
-    <p>2. History Book B - $18.00</p>
+    <div id="book-list">
+      <div>
+        <p>1. Book Title A - $10.00</p>
+        <p>2. Book Title B - $15.00</p>
+      </div>
+    </div>
   </section>
 
   <!-- Contact Section -->
@@ -152,7 +161,7 @@
   <!-- Admin Section -->
   <section id="admin">
     <h2>Admin Panel</h2>
-    <form>
+    <form onsubmit="return handleLogin()">
       <label for="username">Username:</label>
       <input type="text" id="username" name="username" placeholder="Enter username">
       
@@ -166,6 +175,9 @@
 
 <!-- JavaScript -->
 <script>
+  const validUsername = "almanhal3";
+  const validPassword = "al.bookshop25";
+
   function toggleSidebar() {
     const menu = document.getElementById("menu");
     if (menu.style.display === "block") {
@@ -173,6 +185,54 @@
     } else {
       menu.style.display = "block";
     }
+  }
+
+  function showSection(sectionId) {
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+      section.classList.remove('active');
+    });
+
+    const targetSection = document.getElementById(sectionId);
+    targetSection.classList.add('active');
+  }
+
+  function handleLogin() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if (username === validUsername && password === validPassword) {
+      alert("Login successful!");
+      showAdminEditOptions();
+    } else {
+      alert("Invalid username or password.");
+    }
+
+    return false; // Prevent form submission
+  }
+
+  function showAdminEditOptions() {
+    document.getElementById("home").innerHTML = `
+      <h2>Edit Home Page</h2>
+      <textarea rows="5" cols="40">Welcome to Almanhal Bookshop</textarea>
+      <button onclick="saveChanges()">Save</button>
+    `;
+
+    document.getElementById("books").innerHTML = `
+      <h2>Edit Books</h2>
+      <textarea rows="5" cols="40">1. Book Title A - $10.00\n2. Book Title B - $15.00</textarea>
+      <button onclick="saveChanges()">Save</button>
+    `;
+
+    document.getElementById("contact").innerHTML = `
+      <h2>Edit Contact Page</h2>
+      <textarea rows="5" cols="40">Email: contact@almanhalbookshop.com\nPhone: +123-456-7890</textarea>
+      <button onclick="saveChanges()">Save</button>
+    `;
+  }
+
+  function saveChanges() {
+    alert("Changes saved successfully!");
   }
 </script>
 
