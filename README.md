@@ -17,6 +17,7 @@
     body {
       display: flex;
       font-size: 16px;
+      background-color: #f8f9fa;
     }
 
     /* Sidebar Styles */
@@ -62,15 +63,24 @@
     main {
       margin-left: 270px;
       padding: 20px;
-      display: none;
+      background-color: #ffffff;
+      width: 100%;
     }
 
     section {
       display: none;
+      padding: 20px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     section.active {
       display: block;
+    }
+
+    h1, h2 {
+      color: #2c3e50;
     }
 
     /* Admin Section Styles */
