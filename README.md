@@ -6,7 +6,7 @@
   <title>Almanhal Bookshop</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* Reset */
+    /* Reset and Global Styles */
     * {
       margin: 0;
       padding: 0;
@@ -14,7 +14,6 @@
       font-family: "Arial", sans-serif;
     }
 
-    /* Body and Container */
     body {
       display: flex;
       background-color: #f8f9fa;
@@ -26,14 +25,13 @@
       background-color: #2c3e50;
       height: 100vh;
       position: fixed;
-      display: flex;
-      flex-direction: column;
       padding: 20px;
       color: white;
+      transition: 0.3s;
     }
 
-    .sidebar nav {
-      margin-top: 20px;
+    .sidebar.collapsed {
+      width: 60px;
     }
 
     .sidebar a {
@@ -41,11 +39,6 @@
       padding: 10px;
       text-decoration: none;
       color: white;
-      transition: 0.3s;
-    }
-
-    .sidebar a:hover {
-      background-color: #34495e;
     }
 
     button {
@@ -54,7 +47,6 @@
       color: white;
       font-size: 1.5rem;
       cursor: pointer;
-      margin-bottom: 10px;
     }
 
     /* Main Content */
@@ -80,6 +72,28 @@
       color: #2c3e50;
     }
 
+    /* Book List */
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .book-item {
+      background-color: #f1f1f1;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .book-item img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
     /* Admin Panel */
     form {
       display: flex;
@@ -88,7 +102,8 @@
     }
 
     input[type="text"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="file"] {
       padding: 10px;
       margin: 10px 0;
       border: 1px solid #ccc;
@@ -104,17 +119,12 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
-    button[type="submit"]:hover {
-      background-color: #2ecc71;
-    }
-
   </style>
 </head>
 <body>
 
 <!-- Sidebar -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
   <button onclick="toggleSidebar()">☰</button>
   <nav id="menu">
     <a href="#" onclick="showSection('home')">Home</a>
@@ -135,10 +145,16 @@
   <!-- Books Section -->
   <section id="books">
     <h2>Books</h2>
-    <div id="book-list">
-      <div>
-        <p>1. Book Title A - $10.00</p>
-        <p>2. Book Title B - $15.00</p>
+    <div class="book-list" id="bookList">
+      <div class="book-item">
+        <img src="https://via.placeholder.com/150" alt="Book Image">
+        <h3>Book Title A</h3>
+        <p>Price: $10.00</p>
+      </div>
+      <div class="book-item">
+        <img src="https://via.placeholder.com/150" alt="Book Image">
+        <h3>Book Title B</h3>
+        <p>Price: $15.00</p>
       </div>
     </div>
   </section>
@@ -165,18 +181,13 @@
   </section>
 </main>
 
-<!-- JavaScript -->
 <script>
   const validUsername = "almanhal3";
   const validPassword = "al.bookshop25";
 
   function toggleSidebar() {
-    const menu = document.getElementById("menu");
-    if (menu.style.display === "block") {
-      menu.style.display = "none";
-    } else {
-      menu.style.display = "block";
-    }
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
   }
 
   function showSection(sectionId) {
@@ -204,27 +215,39 @@
   }
 
   function showAdminEditOptions() {
-    document.getElementById("home").innerHTML = `
-      <h2>Edit Home Page</h2>
-      <textarea rows="5" cols="40">Welcome to Almanhal Bookshop</textarea>
-      <button onclick="saveChanges()">Save</button>
-    `;
-
     document.getElementById("books").innerHTML = `
       <h2>Edit Books</h2>
-      <textarea rows="5" cols="40">1. Book Title A - $10.00\n2. Book Title B - $15.00</textarea>
-      <button onclick="saveChanges()">Save</button>
-    `;
-
-    document.getElementById("contact").innerHTML = `
-      <h2>Edit Contact Page</h2>
-      <textarea rows="5" cols="40">Email: contact@almanhalbookshop.com\nPhone: +123-456-7890</textarea>
-      <button onclick="saveChanges()">Save</button>
+      <form onsubmit="return addBook(event)">
+        <input type="file" id="bookImage" accept="image/*" required>
+        <input type="text" id="bookTitle" placeholder="Book Title" required>
+        <input type="text" id="bookPrice" placeholder="Price" required>
+        <button type="submit">Add Book</button>
+      </form>
+      <div class="book-list" id="bookList"></div>
     `;
   }
 
-  function saveChanges() {
-    alert("Changes saved successfully!");
+  function addBook(event) {
+    event.preventDefault();
+    const bookList = document.getElementById("bookList");
+    const bookImage = document.getElementById("bookImage").files[0];
+    const bookTitle = document.getElementById("bookTitle").value;
+    const bookPrice = document.getElementById("bookPrice").value;
+
+    if (bookImage) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const bookItem = document.createElement("div");
+        bookItem.className = "book-item";
+        bookItem.innerHTML = `
+          <img src="${e.target.result}" alt="${bookTitle}">
+          <h3>${bookTitle}</h3>
+          <p>Price: ${bookPrice}</p>
+        `;
+        bookList.appendChild(bookItem);
+      };
+      reader.readAsDataURL(bookImage);
+    }
   }
 </script>
 
