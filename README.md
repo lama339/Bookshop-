@@ -6,32 +6,30 @@
   <title>Almanhal Bookshop</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* Global Styles */
+    /* Reset */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: "Arial", sans-serif;
     }
 
+    /* Body and Container */
     body {
       display: flex;
-      font-size: 16px;
       background-color: #f8f9fa;
     }
 
-    /* Sidebar Styles */
+    /* Sidebar */
     .sidebar {
       width: 250px;
       background-color: #2c3e50;
       height: 100vh;
       position: fixed;
-      left: 0;
-      top: 0;
-      color: white;
       display: flex;
       flex-direction: column;
       padding: 20px;
+      color: white;
     }
 
     .sidebar nav {
@@ -59,18 +57,17 @@
       margin-bottom: 10px;
     }
 
-    /* Content Section */
+    /* Main Content */
     main {
       margin-left: 270px;
       padding: 20px;
-      background-color: #ffffff;
       width: 100%;
     }
 
     section {
       display: none;
       padding: 20px;
-      background-color: #e9ecef;
+      background-color: #ffffff;
       border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
@@ -83,7 +80,7 @@
       color: #2c3e50;
     }
 
-    /* Admin Section Styles */
+    /* Admin Panel */
     form {
       display: flex;
       flex-direction: column;
@@ -112,21 +109,6 @@
       background-color: #2ecc71;
     }
 
-    /* Responsive Design */
-    @media screen and (max-width: 768px) {
-      .sidebar {
-        width: 100px;
-      }
-
-      .sidebar a {
-        text-align: center;
-        font-size: 12px;
-      }
-
-      main {
-        margin-left: 110px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -218,7 +200,7 @@
       alert("Invalid username or password.");
     }
 
-    return false; // Prevent form submission
+    return false;
   }
 
   function showAdminEditOptions() {
